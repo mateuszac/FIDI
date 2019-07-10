@@ -1,6 +1,7 @@
 import argparse
 import numpy
 
+
 class DemoCmdl(object):
     """Manage demo of of showin command line parsing"""
     def __init__(self):
@@ -23,6 +24,7 @@ class DemoCmdl(object):
         """Run demonstration of generaging simple mesh model"""
         nodes = numpy.array(range(self.args.nodes_count))
         print('Nodes: ', nodes)
+
 
 if __name__ == '__main__':
     demo = DemoCmdl()
