@@ -1,0 +1,15 @@
+{
+    "geometry" : {
+        "thickness" : 0.12,
+        "width" : 3,
+        "height" : 5
+    },
+    "material" : {
+        "E" : 210000000000,
+        "v" : 0.3
+    },
+    "name" : "shield123",
+    "loads_shield" : 0,
+    "loads_plate" : 0,
+    "density" : 0
+}
