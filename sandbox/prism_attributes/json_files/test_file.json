@@ -1,0 +1,1 @@
+{"geometry": {"thickness": 10, "width": 5, "height": 3}, "material": {"E": 200000000000, "v": 0.4}, "name": "Shield_foo", "loads_shield": 0, "loads_plate": 0, "density": 5}
