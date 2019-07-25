@@ -8,7 +8,7 @@ def fidi_load_file(filename):
 
     try:
 
-        with open('../prism_attributes/json_files/{}.json'.format("data_underlay")) as starting_file:
+        with open('../prism_attributes/json_files/{}.json'.format(filename)) as starting_file:
             return json.load(starting_file)
 
     except FileNotFoundError:
