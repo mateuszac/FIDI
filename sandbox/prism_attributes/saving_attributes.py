@@ -14,7 +14,7 @@ def fidi_save_file(filename, t, w, h, e, v, n, sh, p, d, s):
             answer = str(input("File named {}.json has already been created,"
                                " do you want to override this file [y/n]?".format(filename)))
             if answer == "n":
-                pass
+                filename = filename + ".(2)"
             elif answer == "y":
                 raise FileNotFoundError
             else:
