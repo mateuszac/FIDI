@@ -27,6 +27,7 @@ try:
     loads_shield_data = data['loads_shield']
     loads_plate_data = data['loads_plate']
     density_data = data['density']
+    supports_data = data['supports']
 
 except [TypeError, NameError]:
     pass
@@ -45,19 +46,20 @@ class Prism:
 
 class Shield(Prism):
     """In case loads act in the prism plane"""
-    # loads
-    pass
+
+    loads_shield = loads_shield_data
 
 
 class Plate(Prism):
     """In case loads act perpendicular to the prism plane"""
-    # loads
-    pass
+
+    loads_plate = loads_plate_data
 
 
 class Mesh:
-    # density
-    pass
+    """Regular MRS Mesh data"""
+
+    density = density_data
 
 
 # TEST
