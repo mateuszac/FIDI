@@ -57,7 +57,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "It will be FIDI one day", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("MainWindow", "It is only for checking if everything works fine ", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("MainWindow",
+                                                            "It is only for checking if everything works fine ", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "VERY FIRST FIDI GUI ", None, -1))
         self.checkBox.setText(QtWidgets.QApplication.translate("MainWindow", "This check box will do nothing :D", None, -1))
         self.cry_push_button.setText(QtWidgets.QApplication.translate("MainWindow", "DO NOT CLICK THAT BUTTON !", None, -1))

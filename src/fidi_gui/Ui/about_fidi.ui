@@ -114,5 +114,22 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>OkButton</sender>
+   <signal>clicked(QAbstractButton*)</signal>
+   <receiver>AboutFidi</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>354</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>-10</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

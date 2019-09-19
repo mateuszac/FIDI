@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'about_fidi.ui',
 # licensing of 'about_fidi.ui' applies.
 #
-# Created: Wed Sep 18 23:38:54 2019
+# Created: Thu Sep 19 23:06:14 2019
 #      by: pyside2-uic  running on PySide2 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -54,6 +54,7 @@ class Ui_AboutFidi(object):
         self.label_3.setObjectName("label_3")
 
         self.retranslateUi(AboutFidi)
+        QtCore.QObject.connect(self.OkButton, QtCore.SIGNAL("clicked(QAbstractButton*)"), AboutFidi.close)
         QtCore.QMetaObject.connectSlotsByName(AboutFidi)
 
     def retranslateUi(self, AboutFidi):

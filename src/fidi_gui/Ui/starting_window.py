@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'starting_window.ui',
 # licensing of 'starting_window.ui' applies.
 #
-# Created: Wed Sep 18 23:20:18 2019
+# Created: Thu Sep 19 23:06:30 2019
 #      by: pyside2-uic  running on PySide2 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -14,7 +14,7 @@ class Ui_StartingWindow(object):
     def setupUi(self, StartingWindow):
         StartingWindow.setObjectName("StartingWindow")
         StartingWindow.setWindowModality(QtCore.Qt.NonModal)
-        StartingWindow.resize(701, 461)
+        StartingWindow.resize(701, 465)
         font = QtGui.QFont()
         font.setFamily("Impact")
         font.setPointSize(26)

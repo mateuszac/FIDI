@@ -149,11 +149,11 @@ supports = {'left': 0,
             'bottom': 0}
 pass
 
-supports['left'] = support_input('choose the type of the left boundary : enter 0 for free end, 1 for'
+supports['left'] = support_input('choose the type of the left boundary : enter 0 for free end, 1 for '
                                  'hinged or 2 for fixed connection ')
-supports['right'] = support_input('choose the type of the right boundary : enter 0 for free end, 1 for'
+supports['right'] = support_input('choose the type of the right boundary : enter 0 for free end, 1 for '
                                   'hinged or 2 for fixed connection ')
-supports['top'] = support_input('choose the type of the top boundary : enter 0 for free end, 1 for'
+supports['top'] = support_input('choose the type of the top boundary : enter 0 for free end, 1 for '
                                 'hinged or 2 for fixed connection ')
-supports['bottom'] = support_input('choose the type of the bottom boundary : enter 0 for free end, 1 for'
+supports['bottom'] = support_input('choose the type of the bottom boundary : enter 0 for free end, 1 for '
                                    'hinged or 2 for fixed connection ')

@@ -15,6 +15,7 @@ def fidi_save_file(filename, t, w, h, e, v, n, sh, p, d, s):
                                " do you want to override this file [y/n]?".format(filename)))
             if answer == "n":
                 filename = filename + ".(2)"
+                raise FileNotFoundError
             elif answer == "y":
                 raise FileNotFoundError
             else:
