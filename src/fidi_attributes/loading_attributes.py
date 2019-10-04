@@ -9,7 +9,7 @@ def fidi_load_file(filename):
 
     try:
 
-        with open('../prism_attributes/json_files/{}.json'.format(filename)) as starting_file:
+        with open('../fidi_attributes/json_files/{}.json'.format(filename)) as starting_file:
             return json.load(starting_file)
 
     except FileNotFoundError:
@@ -21,17 +21,13 @@ def fidi_load_file(filename):
 element_filename = input('Please enter the name of element to load')
 data = fidi_load_file(element_filename)  # for now - there is only data_underlay file
 
-try:
-    geometry_data = data['geometry']
-    material_data = data['material']
-    name_data = data['name']
-    loads_shield_data = data['loads_shield']
-    loads_plate_data = data['loads_plate']
-    density_data = data['density']
-    supports_data = data['supports']
-
-except [TypeError, NameError]:
-    pass
+geometry_data = data['geometry']
+material_data = data['material']
+name_data = data['name']
+loads_shield_data = data['loads_shield']
+loads_plate_data = data['loads_plate']
+density_data = data['density']
+supports_data = data['supports']
 
 
 class Prism:
@@ -63,7 +59,6 @@ class Mesh:
     density = density_data
 
 
-# TEST
-
-element = Shield(name_data)
-print(element.geometry)
+if __name__ == '__main__':
+    element = Shield(name_data)  # TEST
+    print(element.geometry)

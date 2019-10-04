@@ -17,8 +17,6 @@ def num_input(description):
     while True:
         try:
             attribute = float(input(description))
-            if attribute <= 0:
-                raise ValueError
         except ValueError:
             print('please enter the number')
         if type(attribute) == float:
@@ -157,3 +155,6 @@ supports['top'] = support_input('choose the type of the top boundary : enter 0 f
                                 'hinged or 2 for fixed connection ')
 supports['bottom'] = support_input('choose the type of the bottom boundary : enter 0 for free end, 1 for '
                                    'hinged or 2 for fixed connection ')
+
+if __name__ == '__main__':
+    print(supports)  # TEST

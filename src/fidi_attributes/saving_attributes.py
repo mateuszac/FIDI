@@ -32,18 +32,19 @@ def fidi_save_file(filename, t, w, h, e, v, n, sh, p, d, s):
                            'density': d,
                            'supports': s}
 
-        with open('../prism_attributes/json_files/{}.json'.format(filename), 'w') as starting_file:
+        with open('../fidi_attributes/json_files/{}.json'.format(filename), 'w') as starting_file:
             starting_file.write(json.dumps(fidi_attributes, indent=4, sort_keys=True))
 
 
-fidi_save_file(C.name,
-               C.thickness,
-               C.width,
-               C.height,
-               C.E,
-               C.v,
-               C.name,
-               C.loads_shield,
-               C.loads_plate,
-               C.density,
-               C.supports)
+if __name__ == '__main__':
+    fidi_save_file(C.name,
+                   C.thickness,
+                   C.width,
+                   C.height,
+                   C.E,
+                   C.v,
+                   C.name,
+                   C.loads_shield,
+                   C.loads_plate,
+                   C.density,
+                   C.supports)
