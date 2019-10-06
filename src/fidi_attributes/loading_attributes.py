@@ -34,7 +34,7 @@ class Prism:
     """Considered elements are solids with constant thickness"""
 
     geometry = geometry_data
-
+    supports = supports_data
     material = material_data
 
     def __init__(self, name):
