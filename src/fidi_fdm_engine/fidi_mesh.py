@@ -1,111 +1,159 @@
 """This part of program is responsible for generating appropriate mesh for finite differences method calculations"""
 import numpy as np
-from src.fidi_attributes import loading_attributes
-
-d = loading_attributes.Mesh.density
-width = loading_attributes.Prism.geometry["width"]
-height = loading_attributes.Prism.geometry["height"]
-Nx = int(width/d + 1)  # number of nodes on horizontal direction
-Ny = int(height/d + 1)  # number of nodes on horizontal direction
-# note : Nx and Ny, should always be neutral numbers provided by algorithm making dimensions of
-#        element fitted to mesh density in src/fidi_attributes/collecting_attributes method
-
-"""Creation of mesh"""
-
-fidi_mesh = np.zeros((Ny+2, Nx+2)) # +2 is to add extra row/column on each edge for respecting boundary conditions
-
-"""Next objects are matrices - initial values of displacement, rotation, plane forces and moments
-   attribute A of each object is mutable matrix, prepared for FDM algorithm"""
 
 
-class FidiW:
-    """Matrix containing displacements of element"""
-    A = fidi_mesh
-    if loading_attributes.Prism.supports["top"] == 1 or 2:   # for now there is no possibility of initial displacement
-        A[1, 1:Nx+1] = 0                                     # but in future value "0" may be changed
-    if loading_attributes.Prism.supports["left"] == 1 or 2:  # to dirichlet boundary condition
-        A[1:Ny+1, 1] = 0
-    if loading_attributes.Prism.supports["bottom"] == 1 or 2:
-        A[Ny, 1:Nx+1] = 0
-    if loading_attributes.Prism.supports["right"] == 1 or 2:
-        A[1:Ny+1, Nx] = 0
+class Mesh(object):
+    """Creation of empty mesh matrix"""
+    def __init__(self, width, height, density):
+        Nx = int(width/density + 1)
+        Ny = int(height/density + 1)
+        self.nodes = (Nx, Ny)
+
+    @property
+    def resolution(self):
+        return self.nodes
 
 
-class FidiFi:
-    """Matrix containing rotations of element"""
-    A = fidi_mesh
-    if loading_attributes.Prism.supports["top"] == 2:   # for now there is no possibility of initial rotation
-        A[1, 1:Nx + 1] = 0                              # but in future value "0" may be changed
-    if loading_attributes.Prism.supports["left"] == 2:  # to dirichlet boundary condition
-        A[1:Ny + 1, 1] = 0
-    if loading_attributes.Prism.supports["bottom"] == 2:
-        A[Ny, 1:Nx + 1] = 0
-    if loading_attributes.Prism.supports["right"] == 2:
-        A[1:Ny + 1, Nx] = 0
+class Displacements(object):
+    """ Matrix containing displacements of element """
+
+    def __init__(self, mesh, element_type, supports):
+        """ preallocate memory for 3D array """
+        self._data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+        # boundary conditions from supports
+        if element_type == "shell" or "plate":
+            if supports["top"] == 1 or supports["top"] == 2:
+                self._data[0, :, 2] = 0
+            if supports["left"] == 1 or supports["left"] == 2:
+                self._data[:, 0, 2] = 0
+            if supports["bottom"] == 1 or supports["bottom"] == 2:
+                self._data[mesh.nodes[0] - 1, :, 2] = 0
+            if supports["right"] == 1 or supports["right"] == 2:
+                self._data[:, mesh.nodes[1] - 1, 2] = 0
+        if element_type == "shell" or "shield":  # Boundary conditions for wx and wy would be added later
+            pass
+
+    @property
+    def wx(self):
+        return self._data[:, :, 0]
+
+    @property
+    def wy(self):
+        return self._data[:, :, 1]
+
+    @property
+    def wz(self):
+        return self._data[:, :, 2]
+
+    @property
+    def displacements(self):
+        return self._data
 
 
-class FidiNxx:
-    """Matrix containing Nxx forces of element"""
-    A = fidi_mesh
-    if loading_attributes.Shield.loads_shield is not None:
-        # top edge
-        A[1, 1:Nx + 1] += 0
-        # left edge
-        A[1:Ny + 1, 1] -= loading_attributes.Shield.loads_shield["x_direction"]['left']
-        # bottom edge
-        A[Ny, 1:Nx + 1] += 0
-        # right edge
-        A[1:Ny + 1, Nx] += loading_attributes.Shield.loads_shield["x_direction"]['right']
-    else:
-        pass
+class Rotations(object):
+    """ Matrix containing rotations of element """
+
+    def __init__(self, mesh, element_type, supports):
+        """ preallocate memory for 3D array """
+        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+        # boundary conditions from supports
+        if element_type == "shell" or "plate":
+            if supports["top"] == 2:
+                self.data[0, :, 2] = 0
+            if supports["left"] == 2:
+                self.data[:, 0, 2] = 0
+            if supports["bottom"] == 2:
+                self.data[mesh.nodes[0] - 1, :, 2] = 0
+            if supports["right"] == 2:
+                self.data[:, mesh.nodes[1] - 1, 2] = 0
+        if element_type == "shell" or "shield": # Boundary conditions for wx and wy would be added later
+            pass
+
+    @property
+    def fix(self):
+        return self.data[:, :, 0]
+
+    @property
+    def fiy(self):
+        return self.data[:, :, 1]
+
+    @property
+    def fiz(self):
+        return self.data[:, :, 2]
+
+    @property
+    def rotations(self):
+        return self.data
 
 
-class FidiNxy:
-    """Matrix containing Nxy forces of element"""
-    A = fidi_mesh
-    if loading_attributes.Shield.loads_shield is not None:
-        # top edge
-        A[1, 1:Nx + 1] += loading_attributes.Shield.loads_shield["x_direction"]['top']
-        # left edge
-        A[1:Ny + 1, 1] -= loading_attributes.Shield.loads_shield["y_direction"]['left']
-        # bottom edge
-        A[Ny, 1:Nx + 1] -= loading_attributes.Shield.loads_shield["x_direction"]['bottom']
-        # right edge
-        A[1:Ny + 1, Nx] += loading_attributes.Shield.loads_shield["y_direction"]['right']
-    else:
-        pass
+class MembraneForces(object):
+    """Represents membrane forces over the shield or shell objects
+    """
+
+    def __init__(self, mesh):
+        """ preallocate memory for 3D array """
+        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+
+    @property
+    def nxx(self):
+        return self.data[:, :, 0]
+
+    @property
+    def nyy(self):
+        return self.data[:, :, 1]
+
+    @property
+    def nxy(self):
+        return self.data[:, :, 2]
+
+    @property
+    def forces(self):
+        return self.data
 
 
-class FidiNyy:
-    """Matrix containing Nyy forces of element"""
-    A = fidi_mesh
-    if loading_attributes.Shield.loads_shield is not None:
-        # top edge
-        A[1, 1:Nx + 1] += loading_attributes.Shield.loads_shield["y_direction"]['top']
-        # left edge
-        A[1:Ny + 1, 1] += 0
-        # bottom edge
-        A[Ny, 1:Nx + 1] -= loading_attributes.Shield.loads_shield["y_direction"]['bottom']
-        # right edge
-        A[1:Ny + 1, Nx] += 0
-    else:
-        pass
+class MembraneMoment(object):
+    """Represents membrane moments over the plate or shell objects
+    """
 
+    def __init__(self, mesh):
+        """ preallocate memory for 3D array """
+        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
 
-class FidiMxx:
-    """Matrix containing Mxx moments of element"""
-    A = fidi_mesh
+    @property
+    def mxx(self):
+        return self.data[:, :, 0]
 
+    @property
+    def myy(self):
+        return self.data[:, :, 1]
 
-class FidiMxy:
-    """Matrix containing Mxy moments of element"""
-    A = fidi_mesh
+    @property
+    def mxy(self):
+        return self.data[:, :, 2]
 
-
-class FidiMyy:
-    """Matrix containing Myy moments of element"""
-    A = fidi_mesh
+    @property
+    def moments(self):
+        return self.data
 
 
 if __name__ == '__main__':    # TEST
-    print(FidiNyy.A)
+
+    class AnyClass(object):            # This is only for testing mesh, supports would be imported from Prism class
+        def __init__(self):
+            self.supports = {
+                            "bottom": 0,
+                            "left": 0,
+                            "right": 0,
+                            "top": 0
+                            }
+
+        def sup(self):
+            return self.supports
+
+    AnyObject = AnyClass()
+    prism = AnyObject.sup()
+
+    test_mesh = Mesh(2, 5, 0.1)
+    test_displacement_matrix = Displacements(test_mesh, "plate", prism)
+
+    print(test_displacement_matrix.wz)
