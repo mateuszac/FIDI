@@ -2,11 +2,13 @@
 attributes from user and saving it in json format"""
 
 import json
-from collecting_attributes import console_input_attributes as C  # for now only console input, I will add GUI later
+from src.fidi_attributes.collecting_attributes import console_input_attributes as console
 
 
-def fidi_save_file(filename, t, w, h, e, v, n, sh, p, d, s):
+def fidi_save_file(props):
     """Function for saving properties of elements in json format"""
+
+    filename = props[0]
 
     try:
 
@@ -24,27 +26,20 @@ def fidi_save_file(filename, t, w, h, e, v, n, sh, p, d, s):
     except FileNotFoundError:
 
         fidi_attributes = {
-                           'geometry': {'thickness': t, 'width': w, 'height': h},
-                           'material': {'E': e, 'v': v},
-                           'name': n,
-                           'loads_shield': sh,
-                           'loads_plate': p,
-                           'density': d,
-                           'supports': s}
+                           'name': props[0],
+                           'geometry': {'thickness': props[1], 'width': props[2], 'height': props[3]},
+                           'material': {'E': props[4], 'v': props[5]},
+                           'object_type': props[6],
+                           'loads_shield': props[7],
+                           'loads_plate': props[8],
+                           'density': props[9],
+                           'supports': props[10]}
 
         with open('../fidi_attributes/json_files/{}.json'.format(filename), 'w') as starting_file:
             starting_file.write(json.dumps(fidi_attributes, indent=4, sort_keys=True))
 
 
 if __name__ == '__main__':
-    fidi_save_file(C.name,
-                   C.thickness,
-                   C.width,
-                   C.height,
-                   C.E,
-                   C.v,
-                   C.name,
-                   C.loads_shield,
-                   C.loads_plate,
-                   C.density,
-                   C.supports)
+
+    properties = console.console_collecting_attributes()
+    fidi_save_file(properties)

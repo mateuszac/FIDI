@@ -1,0 +1,22 @@
+{
+    "density": 2.0,
+    "geometry": {
+        "height": 4.0,
+        "thickness": 4.0,
+        "width": 4.0
+    },
+    "loads_plate": 4.0,
+    "loads_shield": null,
+    "material": {
+        "E": 30.0,
+        "v": 0.3
+    },
+    "name": "new_test",
+    "object_type": "plate",
+    "supports": {
+        "bottom": 1,
+        "left": 2,
+        "right": 1,
+        "top": 1
+    }
+}
