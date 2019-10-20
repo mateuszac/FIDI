@@ -118,7 +118,7 @@ class Shield(Prism):
         super().__init__(json_data)
         self._loads_shield = json_data['loads_shield']
         # Stiffness of shield
-        self._Ds = (self._material["E"] * self._geometry["height"]) / ((1 - self._material["v"] ** 2)
+        self._Ds = (self._material["E"] * self._geometry["height"]) / (1 - self._material["v"] ** 2)
 
     @property
     def loads_shield(self):
