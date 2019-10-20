@@ -19,35 +19,35 @@ class Displacements(object):
 
     def __init__(self, mesh, element_type, supports):
         """ preallocate memory for 3D array """
-        self._data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
         # boundary conditions from supports
         if element_type == "shell" or "plate":
             if supports["top"] == 1 or supports["top"] == 2:
-                self._data[0, :, 2] = 0
+                self.data[0, :, 2] = 0
             if supports["left"] == 1 or supports["left"] == 2:
-                self._data[:, 0, 2] = 0
+                self.data[:, 0, 2] = 0
             if supports["bottom"] == 1 or supports["bottom"] == 2:
-                self._data[mesh.nodes[0] - 1, :, 2] = 0
+                self.data[mesh.nodes[0] - 1, :, 2] = 0
             if supports["right"] == 1 or supports["right"] == 2:
-                self._data[:, mesh.nodes[1] - 1, 2] = 0
+                self.data[:, mesh.nodes[1] - 1, 2] = 0
         if element_type == "shell" or "shield":  # Boundary conditions for wx and wy would be added later
             pass
 
     @property
     def wx(self):
-        return self._data[:, :, 0]
+        return self.data[:, :, 0]
 
     @property
     def wy(self):
-        return self._data[:, :, 1]
+        return self.data[:, :, 1]
 
     @property
     def wz(self):
-        return self._data[:, :, 2]
+        return self.data[:, :, 2]
 
     @property
     def displacements(self):
-        return self._data
+        return self.data
 
 
 class Rotations(object):

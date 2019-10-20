@@ -2,6 +2,8 @@
 attributes from existing json file"""
 
 import json
+from src.fidi_fdm_engine import fidi_fdm_algorithm as fdm  # importing functions responsible for FDM algorithm
+from src.fidi_fdm_engine import fidi_mesh as stat          # importing classes containing statical quantities
 
 
 def fidi_load_file(filename):
@@ -28,12 +30,22 @@ def create_element():  # Later I will add possibility of using argument of filen
         return Shell(_data)
 
 
+def statical_quantities(width, height, density, element_type, supports):
+    """Creating objects from statical quantities classes"""
+    mesh = stat.Mesh(width, height, density)
+    displacements = stat.Displacements(mesh, element_type, supports)
+    rotations = stat.Rotations(mesh, element_type, supports)
+    membrane_forces = stat.MembraneForces(mesh)
+    membrane_moment = stat.MembraneMoment(mesh)
+    return [mesh, displacements, rotations, membrane_forces, membrane_moment]
+
+
 class Prism(object):
     """Prism object contain all the information gathered from user about properties of element, density of mesh
     and location of supports. Methods of this class are inherited to Shell, Shield and Plate classes
     """
 
-    def __init__(self, json_data):
+    def __init__(self, json_data, computed=False):
         """ Loading all properties from existing json file """
 
         self._geometry = json_data['geometry']
@@ -42,6 +54,16 @@ class Prism(object):
         self._density = json_data['density']
         self._supports = json_data['supports']
         self._object_type = json_data['object_type']
+        self._computed = computed
+
+        """setting initial statical quantities"""
+        statics = statical_quantities(self._geometry['width'], self._geometry['height'], self._density,
+                                      self._object_type, self._supports)
+        self._nodes = statics[0].nodes
+        self._displacements = statics[1].data
+        self._rotations = statics[2].data
+        self._membrane_forces = statics[3].data
+        self._membrane_moment = statics[4].data
 
     @property
     def geometry(self):
@@ -67,6 +89,26 @@ class Prism(object):
     def object_type(self):
         return self._object_type
 
+    @property
+    def nodes(self):
+        return self._nodes
+
+    @property
+    def displacements(self):
+        return self._displacements
+
+    @property
+    def rotations(self):
+        return self._rotations
+
+    @property
+    def membrane_forces(self):
+        return self._membrane_forces
+
+    @property
+    def membrane_moment(self):
+        return self._membrane_moment
+
 
 class Shield(Prism):
     """In case loads act in the prism plane"""
@@ -75,10 +117,16 @@ class Shield(Prism):
         """ Loading all methods of any Prism object and shield loads"""
         super().__init__(json_data)
         self._loads_shield = json_data['loads_shield']
+        # Stiffness of shield
+        self._Ds = (self._material["E"] * self._geometry["height"]) / ((1 - self._material["v"] ** 2)
 
     @property
     def loads_shield(self):
         return self._loads_shield
+
+    def compute(self):
+        self._computed = True
+        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield)
 
 
 class Plate(Prism):
@@ -88,10 +136,16 @@ class Plate(Prism):
         """ Loading all methods of any Prism object and plate loads"""
         super().__init__(json_data)
         self._loads_plate = json_data['loads_plate']
+        # Flexural stiffness of plate
+        self._Dp = (self._material["E"]*self._geometry["height"]**3)/(12*(1-self._material["v"]**2))
 
     @property
     def loads_plate(self):
         return self._loads_plate
+
+    def compute(self):
+        self._computed = True
+        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate)
 
 
 class Shell(Shield, Plate):
@@ -100,6 +154,11 @@ class Shell(Shield, Plate):
     def __init__(self, json_data):
         """ Loading all methods and attributes of any Shield or Plate object"""
         super().__init__(json_data)
+
+    def compute(self):
+        self._computed = True
+        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate)
+        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield)
 
 
 if __name__ == '__main__':
