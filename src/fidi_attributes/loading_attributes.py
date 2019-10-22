@@ -126,7 +126,7 @@ class Shield(Prism):
 
     def compute(self):
         self._computed = True
-        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield)
+        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield, self._supports)
 
 
 class Plate(Prism):
@@ -145,7 +145,7 @@ class Plate(Prism):
 
     def compute(self):
         self._computed = True
-        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate)
+        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate, self._supports)
 
 
 class Shell(Shield, Plate):
@@ -157,8 +157,8 @@ class Shell(Shield, Plate):
 
     def compute(self):
         self._computed = True
-        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate)
-        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield)
+        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate, self._supports)
+        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield, self._supports)
 
 
 if __name__ == '__main__':

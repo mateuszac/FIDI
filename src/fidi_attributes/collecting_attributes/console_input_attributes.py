@@ -82,20 +82,27 @@ def console_collecting_attributes():
 
     type_of_element = type_input('choose the type of the element : enter 1 for shield, 2 for plate or 3 for shell ')
 
-    """Density of regular mesh in [m]"""
-
-    density = positive_num_input('enter the density of mesh in [m] - warning : dimensions of'
-                                 ' element will be fitted to mesh density ')
-
-    """Geometry of prism, dimensions are fitted to mesh"""
+    """Geometry of prism, and density of regular mesh in [m] (dimensions are fitted to mesh)"""
 
     thickness = positive_num_input('enter the thickness of element in [m] ')
 
     width_input = positive_num_input('enter the width of element in [m] ')
-    width = density*round(width_input/density, 0)
 
     height_input = positive_num_input('enter the height of element in [m] ')
-    height = density*round(height_input/density, 0)
+
+    while True:
+        density = positive_num_input('enter the density of mesh in [m] - warning : dimensions of'
+                                     ' element will be fitted to mesh density ')
+
+        width = density * round(width_input / density, 0)
+        height = density*round(height_input/density, 0)
+        Nx = int(width / density + 1)
+        Ny = int(height / density + 1)
+        if Nx > 4 and Ny > 4:
+            break
+        else:
+            print('error, the mesh is too rare, please choose another density')
+            continue
 
     """material properties. E in GPa, v is dimensionless"""
 
