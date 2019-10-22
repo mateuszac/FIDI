@@ -1,5 +1,5 @@
 # FIDI
- Program for static analysis for shields and plates using  finite-difference methods (FDM)
+ Program for static analysis for shields and plates using  finite-difference method (FDM)
 
 ## Folders structure
 
@@ -21,7 +21,7 @@ List of necessary python packages in order to run FIDI :
 Installation
 ------------
 
-At this moment program is made from 2 separate parts - GUI and file gathering and
+At this moment program consists of 2 separate parts - GUI and file gathering and
 saving data from user.
 
 There is no ready to use setup file for GUI yet, however you may run it directly
