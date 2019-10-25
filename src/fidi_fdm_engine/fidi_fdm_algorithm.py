@@ -48,51 +48,81 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         p[0, 0] = 0
         A[0, 0] = 1  # after A*w=P it gives result 1*w1 = 0
     else:
-        p[0, 0] = (q*density**4)/4*Dp
-        A[0, 0] = (3+v)*(1-v)
-        A[0, 1] = -(3+v)*(1-v)
-        A[0, 2] = (1-v**2)/2
-        A[0, i] = -(3+v)*(1-v)
-        A[0, i+1] = 2*(3-v)
-        A[0, 2*i] = (1-v**2)/2
+        p[0, 0] = (q * density ** 4) / 4 * Dp
+        A[0, 0] = (3 + v) * (1 - v)
+        A[0, 1] = -(3 + v) * (1 - v)
+        A[0, 2] = (1 - v ** 2) / 2
+        A[0, i] = -(3 + v) * (1 - v)
+        A[0, i + 1] = 2 * (3 - v)
+        A[0, 2 * i] = (1 - v ** 2) / 2
 
     if supports["top"] in [1, 2] or supports["right"] in [1, 2]:   # top-right
-        p[i-1, 0] = 0
-        A[i-1, i-1] = 1
+        p[i - 1, 0] = 0
+        A[i - 1, i - 1] = 1
     else:
-        p[i-1, 0] = (q*density**4)/4*Dp
-        A[i-1, i-1] = (3+v)*(1-v)
-        A[i-1, i-2] = -(3+v)*(1-v)
-        A[i-1, i-3] = (1-v**2)/2
-        A[i-1, i+i-1] = -(3+v)*(1-v)
-        A[i-1, i+i-2] = 2*(3-v)
-        A[i-1, 2*i+i-1] = (1-v**2)/2
+        p[i - 1, 0] = (q * density ** 4) / 4 * Dp
+        A[i - 1, i - 1] = (3 + v) * (1 - v)
+        A[i - 1, i - 2] = -(3 + v) * (1 - v)
+        A[i - 1, i - 3] = (1 - v ** 2) / 2
+        A[i - 1, i + i - 1] = -(3 + v) * (1 - v)
+        A[i - 1, i + i - 2] = 2 * (3 - v)
+        A[i - 1, 2 * i + i - 1] = (1 - v ** 2) / 2
 
     if supports["bottom"] in [1, 2] or supports["left"] in [1, 2]:   # bottom-left
-        p[(j-1)*i, 0] = 0
-        A[(j-1)*i, (j-1)*i] = 1
+        p[(j - 1) * i, 0] = 0
+        A[(j - 1) * i, (j - 1) * i] = 1
     else:
-        p[(j-1)*i, 0] = (q*density**4)/4*Dp
-        A[(j-1)*i, (j-1)*i] = (3+v)*(1-v)
-        A[(j-1)*i, (j-1)*i+1] = -(3+v)*(1-v)
-        A[(j-1)*i, (j-1)*i+2] = (1-v**2)/2
-        A[(j-1)*i, (j-2)*i] = -(3+v)*(1-v)
-        A[(j-1)*i, (j-2)*i+1] = 2*(3-v)
-        A[(j-1)*i, (j-3)*i] = (1-v**2)/2
+        p[(j - 1) * i, 0] = (q * density ** 4) / 4 * Dp
+        A[(j - 1) * i, (j - 1) * i] = (3 + v) * (1 - v)
+        A[(j - 1) * i, (j - 1) * i + 1] = -(3 + v) * (1 - v)
+        A[(j - 1) * i, (j - 1) * i + 2] = (1 - v ** 2) / 2
+        A[(j - 1) * i, (j - 2) * i] = -(3 + v) * (1 - v)
+        A[(j - 1) * i, (j - 2) * i + 1] = 2 * (3 - v)
+        A[(j - 1) * i, (j - 3) * i] = (1 - v ** 2) / 2
 
     if supports["bottom"] in [1, 2] or supports["right"] in [1, 2]:   # bottom-right
-        p[(j-1)*i + i-1, 0] = 0
-        A[(j-1)*i + i-1, (j-1)*i + i-1] = 1
+        p[(j - 1) * i + i - 1, 0] = 0
+        A[(j - 1) * i + i - 1, (j - 1) * i + i - 1] = 1
     else:
-        p[(j-1)*i + i-1, 0] = (q*density**4)/4*Dp
-        A[(j-1)*i + i-1, (j-1)*i + i-1] = (3+v)*(1-v)
-        A[(j-1)*i + i-1, (j-1)*i + i-2] = -(3+v)*(1-v)
-        A[(j-1)*i + i-1, (j-1)*i + i-3] = (1-v**2)/2
-        A[(j-1)*i + i-1, (j-2)*i + i-1] = -(3+v)*(1-v)
-        A[(j-1)*i + i-1, (j-2)*i + i-2] = 2*(3-v)
-        A[(j-1)*i + i-1, (j-3)*i + i-1] = (1-v**2)/2
+        p[(j - 1) * i + i - 1, 0] = (q * density ** 4) / 4 * Dp
+        A[(j - 1) * i + i - 1, (j - 1) * i + i - 1] = (3 + v) * (1 - v)
+        A[(j - 1) * i + i - 1, (j - 1) * i + i - 2] = -(3 + v) * (1 - v)
+        A[(j - 1) * i + i - 1, (j - 1) * i + i - 3] = (1 - v ** 2) / 2
+        A[(j - 1) * i + i - 1, (j - 2) * i + i - 1] = -(3 + v) * (1 - v)
+        A[(j - 1) * i + i - 1, (j - 2) * i + i - 2] = 2 * (3 - v)
+        A[(j - 1) * i + i - 1, (j - 3) * i + i - 1] = (1 - v ** 2) / 2
 
     """ 4. Setting equations for corner-edge points (B) """
+
+    if supports["top"] in [1, 2]:   # top-left-top
+        p[1, 0] = 0
+        A[1, 1] = 1
+    elif supports["left"] == 0:
+        p[1, 0] = (q * density ** 4) / 2 * Dp
+        A[1, 0] = -(3 + v) * (1 - v)
+        A[1, 1] = (15 - 8 * v - 5 * v ** 2) / 2
+        A[1, 2] = -2 * (2 + v) * (1 - v)
+        A[1, 3] = (1 - v ** 2) / 2
+        A[1, i] = 2 - v
+        A[1, i + 1] = -2 * (3 - v)
+        A[1, i + 2] = 2 - v
+        A[1, 2 * i + 1] = 1
+    elif supports["left"] == 1:
+        p[1, 0] = (q * density ** 4) / 2 * Dp
+        A[1, 1] = (15 - 8 * v - 5 * v ** 2) / 2
+        A[1, 2] = -2 * (2 + v) * (1 - v)
+        A[1, 3] = (1 - v ** 2) / 2
+        A[1, i + 1] = -2 * (3 - v)
+        A[1, i + 2] = 2 - v
+        A[1, 2 * i + 1] = 1
+    else:
+        p[1, 0] = (q * density ** 4) / 2 * Dp
+        A[1, 1] = (17 - 8 * v - 7 * v ** 2) / 2
+        A[1, 2] = -2 * (2 + v) * (1 - v)
+        A[1, 3] = (1 - v ** 2) / 2
+        A[1, i + 1] = -2 * (3 - v)
+        A[1, i + 2] = 2 - v
+        A[1, 2 * i + 1] = 1
 
     """ 5. Setting equations for edge points (C) """
 
@@ -116,19 +146,19 @@ if __name__ == '__main__':
 
     class Anyclass(object):
         def __init__(self):
-            self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((4, 4))]
+            self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((3, 3))]
 
 
     a = Anyclass()
     b = 2
     c = 5
     d = {
-        "bottom": 0,
+        "bottom": 1,
         "left": 0,
         "right": 2,
         "top": 0
         }
     e = 1
-    f = 1
+    f = 0.3
     g = compute_plate(a, b, c, d, e, f)
     print(g)
