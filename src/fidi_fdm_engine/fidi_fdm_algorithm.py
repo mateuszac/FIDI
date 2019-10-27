@@ -94,35 +94,61 @@ def compute_plate(displacements, Dp, q, supports, density, v):
 
     """ 4. Setting equations for corner-edge points (B) """
 
-    if supports["top"] in [1, 2]:   # top-left-top
-        p[1, 0] = 0
-        A[1, 1] = 1
-    elif supports["left"] == 0:
-        p[1, 0] = (q * density ** 4) / 2 * Dp
-        A[1, 0] = -(3 + v) * (1 - v)
-        A[1, 1] = (15 - 8 * v - 5 * v ** 2) / 2
-        A[1, 2] = -2 * (2 + v) * (1 - v)
-        A[1, 3] = (1 - v ** 2) / 2
-        A[1, i] = 2 - v
-        A[1, i + 1] = -2 * (3 - v)
-        A[1, i + 2] = 2 - v
-        A[1, 2 * i + 1] = 1
-    elif supports["left"] == 1:
-        p[1, 0] = (q * density ** 4) / 2 * Dp
-        A[1, 1] = (15 - 8 * v - 5 * v ** 2) / 2
-        A[1, 2] = -2 * (2 + v) * (1 - v)
-        A[1, 3] = (1 - v ** 2) / 2
-        A[1, i + 1] = -2 * (3 - v)
-        A[1, i + 2] = 2 - v
-        A[1, 2 * i + 1] = 1
-    else:
-        p[1, 0] = (q * density ** 4) / 2 * Dp
-        A[1, 1] = (17 - 8 * v - 7 * v ** 2) / 2
-        A[1, 2] = -2 * (2 + v) * (1 - v)
-        A[1, 3] = (1 - v ** 2) / 2
-        A[1, i + 1] = -2 * (3 - v)
-        A[1, i + 2] = 2 - v
-        A[1, 2 * i + 1] = 1
+    def corner_edge_nodes(main_edge, secondary_edge, node, n1, n2, n3, n4, n5, n6, n7, n8,
+                          _A=A, _p=p, _i=i, _j=j, _v=v, _density=density, _Dp=Dp, _q=q):
+        if main_edge in [1, 2]:
+            _p[node, 0] = 0
+            _A[node, node] = 1
+        elif secondary_edge == 0:
+            _p[node, 0] = (_q * _density ** 4) / 2 * _Dp
+            _A[node, n1] = -(3 + _v) * (1 - _v)
+            _A[node, n2] = (15 - 8 * _v - 5 * _v ** 2) / 2
+            _A[node, n3] = -2 * (2 + _v) * (1 - _v)
+            _A[node, n4] = (1 - _v ** 2) / 2
+            _A[node, n5] = 2 - _v
+            _A[node, n6] = -2 * (3 - _v)
+            _A[node, n7] = 2 - _v
+            _A[node, n8] = 1
+        elif secondary_edge == 1:
+            _A[node, n2] = (15 - 8 * _v - 5 * _v ** 2) / 2
+            _A[node, n3] = -2 * (2 + _v) * (1 - _v)
+            _A[node, n4] = (1 - _v ** 2) / 2
+            _A[node, n6] = -2 * (3 - _v)
+            _A[node, n7] = 2 - _v
+            _A[node, n8] = 1
+        else:
+            _p[node, 0] = (_q * _density ** 4) / 2 * _Dp
+            _A[node, n2] = (17 - 8 * _v - 7 * _v ** 2) / 2
+            _A[node, n3] = -2 * (2 + _v) * (1 - _v)
+            _A[node, n4] = (1 - _v ** 2) / 2
+            _A[node, n6] = -2 * (3 - _v)
+            _A[node, n7] = 2 - _v
+            _A[node, n8] = 1
+        return [_A, _p]
+
+    [A, p] = corner_edge_nodes(supports["top"], supports["left"],   # top-left-top
+                               1, 0, 1, 2, 3, i, i + 1, i + 2, 2 * i + 1)
+    [A, p] = corner_edge_nodes(supports["left"], supports["top"],  # top-left-left
+                               i, 0, i, 2 * i, 3 * i, 1, i + 1, 2 * i + 1, i + 2)
+    [A, p] = corner_edge_nodes(supports["top"], supports["right"],  # top-right-top
+                               i - 2, i - 1, i - 2, i - 3, i - 4, i + i - 1, i + i - 2, i + i - 3, 2 * i + i - 2)
+    [A, p] = corner_edge_nodes(supports["right"], supports["top"],  # top-right-right
+                               i + i - 1, i - 1, i + i - 1, 2 * i + i - 1, 3 * i + i - 1, i - 2, i + i - 2,
+                               2 * i + i - 2, i + i - 3)
+    [A, p] = corner_edge_nodes(supports["bottom"], supports["left"],  # bottom-left-bottom
+                               (j - 1) * i + 1, (j - 1) * i, (j - 1) * i + 1, (j - 1) * i + 2, (j - 1) * i + 3,
+                               (j - 2) * i, (j - 2) * i + 1, (j - 2) * i + 2, (j - 3) * i + 1)
+    [A, p] = corner_edge_nodes(supports["left"], supports["bottom"],  # bottom-left-left
+                               (j - 2) * i, (j - 1) * i, (j - 2) * i, (j - 3) * i, (j - 4) * i,
+                               (j - 1) * i + 1, (j - 2) * i + 1, (j - 3) * i + 1, (j - 2) * i + 2)
+    [A, p] = corner_edge_nodes(supports["bottom"], supports["right"],  # bottom-right-bottom
+                               (j - 1) * i + i - 2, (j - 1) * i + i - 1, (j - 1) * i + i - 2, (j - 1) * i + i - 3,
+                               (j - 1) * i + i - 4, (j - 2) * i + i - 1, (j - 2) * i + i - 2, (j - 2) * i + i - 3,
+                               (j - 3) * i + i - 2)
+    [A, p] = corner_edge_nodes(supports["right"], supports["bottom"],  # bottom-right-right
+                               (j - 2) * i + i - 1, (j - 1) * i + i - 1, (j - 2) * i + i - 1, (j - 3) * i + i - 1,
+                               (j - 4) * i + i - 1, (j - 1) * i + i - 2, (j - 2) * i + i - 2, (j - 3) * i + i - 2,
+                               (j - 2) * i + i - 3)
 
     """ 5. Setting equations for edge points (C) """
 
@@ -133,7 +159,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
     """ 7. Setting equations for mid points (F) """
 
     """ 8. Calculation of Aw = p equation """
-    wf = A
+    wf = A  # This line would be removed, it is only for testing A matrix
     return wf
 
 
@@ -146,7 +172,7 @@ if __name__ == '__main__':
 
     class Anyclass(object):
         def __init__(self):
-            self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((3, 3))]
+            self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((4, 4))]
 
 
     a = Anyclass()
@@ -154,9 +180,9 @@ if __name__ == '__main__':
     c = 5
     d = {
         "bottom": 1,
-        "left": 0,
-        "right": 2,
-        "top": 0
+        "left": 1,
+        "right": 0,
+        "top": 1
         }
     e = 1
     f = 0.3
