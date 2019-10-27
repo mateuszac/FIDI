@@ -48,7 +48,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         p[0, 0] = 0
         A[0, 0] = 1  # after A*w=P it gives result 1*w1 = 0
     else:
-        p[0, 0] = (q * density ** 4) / 4 * Dp
+        p[0, 0] = (q * density ** 4) / (4 * Dp)
         A[0, 0] = (3 + v) * (1 - v)
         A[0, 1] = -(3 + v) * (1 - v)
         A[0, 2] = (1 - v ** 2) / 2
@@ -60,7 +60,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         p[i - 1, 0] = 0
         A[i - 1, i - 1] = 1
     else:
-        p[i - 1, 0] = (q * density ** 4) / 4 * Dp
+        p[i - 1, 0] = (q * density ** 4) / (4 * Dp)
         A[i - 1, i - 1] = (3 + v) * (1 - v)
         A[i - 1, i - 2] = -(3 + v) * (1 - v)
         A[i - 1, i - 3] = (1 - v ** 2) / 2
@@ -72,7 +72,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         p[(j - 1) * i, 0] = 0
         A[(j - 1) * i, (j - 1) * i] = 1
     else:
-        p[(j - 1) * i, 0] = (q * density ** 4) / 4 * Dp
+        p[(j - 1) * i, 0] = (q * density ** 4) / (4 * Dp)
         A[(j - 1) * i, (j - 1) * i] = (3 + v) * (1 - v)
         A[(j - 1) * i, (j - 1) * i + 1] = -(3 + v) * (1 - v)
         A[(j - 1) * i, (j - 1) * i + 2] = (1 - v ** 2) / 2
@@ -84,7 +84,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         p[(j - 1) * i + i - 1, 0] = 0
         A[(j - 1) * i + i - 1, (j - 1) * i + i - 1] = 1
     else:
-        p[(j - 1) * i + i - 1, 0] = (q * density ** 4) / 4 * Dp
+        p[(j - 1) * i + i - 1, 0] = (q * density ** 4) / (4 * Dp)
         A[(j - 1) * i + i - 1, (j - 1) * i + i - 1] = (3 + v) * (1 - v)
         A[(j - 1) * i + i - 1, (j - 1) * i + i - 2] = -(3 + v) * (1 - v)
         A[(j - 1) * i + i - 1, (j - 1) * i + i - 3] = (1 - v ** 2) / 2
@@ -100,7 +100,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
             _p[node, 0] = 0
             _A[node, node] = 1
         elif secondary_edge == 0:
-            _p[node, 0] = (_q * _density ** 4) / 2 * _Dp
+            _p[node, 0] = (_q * _density ** 4) / (2 * _Dp)
             _A[node, n1] = -(3 + _v) * (1 - _v)
             _A[node, n2] = (15 - 8 * _v - 5 * _v ** 2) / 2
             _A[node, n3] = -2 * (2 + _v) * (1 - _v)
@@ -110,6 +110,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
             _A[node, n7] = 2 - _v
             _A[node, n8] = 1
         elif secondary_edge == 1:
+            _p[node, 0] = (_q * _density ** 4) / (2 * _Dp)
             _A[node, n2] = (15 - 8 * _v - 5 * _v ** 2) / 2
             _A[node, n3] = -2 * (2 + _v) * (1 - _v)
             _A[node, n4] = (1 - _v ** 2) / 2
@@ -117,7 +118,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
             _A[node, n7] = 2 - _v
             _A[node, n8] = 1
         else:
-            _p[node, 0] = (_q * _density ** 4) / 2 * _Dp
+            _p[node, 0] = (_q * _density ** 4) / (2 * _Dp)
             _A[node, n2] = (17 - 8 * _v - 7 * _v ** 2) / 2
             _A[node, n3] = -2 * (2 + _v) * (1 - _v)
             _A[node, n4] = (1 - _v ** 2) / 2
@@ -152,15 +153,245 @@ def compute_plate(displacements, Dp, q, supports, density, v):
 
     """ 5. Setting equations for edge points (C) """
 
+    def edge_nodes(edge, node, n1, n2, n3, n4, n5, n6, n7, n8, n9,
+                          _A=A, _p=p, _i=i, _j=j, _v=v, _density=density, _Dp=Dp, _q=q):
+        if edge in [1, 2]:
+            _p[node, 0] = 0
+            _A[node, node] = 1
+        else:
+            _p[node, 0] = (_q * _density ** 4) / (2 * _Dp)
+            _A[node, n1] = (1 - _v ** 2) / 2
+            _A[node, n2] = -2 * (2 + _v) * (1 - _v)
+            _A[node, n3] = 8 - 4 * _v - 3 * _v ** 2
+            _A[node, n4] = -2 * (2 + _v) * (1 - _v)
+            _A[node, n5] = (1 - _v ** 2) / 2
+            _A[node, n6] = 2 - _v
+            _A[node, n7] = -2 * (3 - _v)
+            _A[node, n8] = 2 - _v
+            _A[node, n9] = 1
+        return [_A, _p]
+
+    for m in range(2, i - 2, 1):    # top
+        [A, p] = edge_nodes(supports["top"],
+                            m, m - 2, m - 1, m, m + 1, m + 2, i + m - 1, i + m, i + m + 1, 2 * i + m)
+    for m in range(2 * i, (j - 2) * i, i):  # left
+        [A, p] = edge_nodes(supports["left"],
+                            m, -2 * i + m, -1 * i + m, m, i + m, 2 * i + m, -1 * i + m + 1, m + 1, i + m + 1, m + 2)
+    for m in range((j - 1) * i + 2, (j - 1) * i + i - 2, 1):  # bottom
+        [A, p] = edge_nodes(supports["bottom"],
+                            m, m - 2, m - 1, m, m + 1, m + 2, -1 * i + m - 1, -1 * i + m, -1 * i + m + 1, -2 * i + m)
+    for m in range(2 * i + i - 1, (j - 2) * i + i - 1, i):  # right
+        [A, p] = edge_nodes(supports["right"],
+                            m, -2 * i + m, -1 * i + m, m, i + m, 2 * i + m, -1 * i + m - 1, m - 1, i + m - 1, m - 2)
+
     """ 5. Setting equations for corner-mid points (D) """
+
+    def corner_mid_nodes(horizontal_edge, vertical_edge, node, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11,
+                          _A=A, _p=p, _i=i, _j=j, _v=v, _density=density, _Dp=Dp, _q=q):
+        if vertical_edge == 0:
+            if horizontal_edge == 0:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n1] = -2 * (1 - _v)
+                _A[node, n2] = -2 * (3 - _v)
+                _A[node, n3] = 2 - _v
+                _A[node, n4] = -2 * (3 - _v)
+                _A[node, n5] = 18
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n8] = 2 - _v
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+            elif horizontal_edge == 1:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n2] = -2 * (3 - _v)
+                _A[node, n3] = 2 - _v
+                _A[node, n5] = 18
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+            else:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n2] = -2 * (3 - _v)
+                _A[node, n3] = 2 - _v
+                _A[node, n5] = 20
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+
+        elif vertical_edge == 1:
+            if horizontal_edge == 0:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n4] = -2 * (3 - _v)
+                _A[node, n5] = 18
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n8] = 2 - _v
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+            elif horizontal_edge == 1:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n5] = 18
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+            else:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n5] = 20
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+
+        else:
+            if horizontal_edge == 0:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n4] = -2 * (3 - _v)
+                _A[node, n5] = 20
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n8] = 2 - _v
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+            elif horizontal_edge == 1:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n5] = 20
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+            else:
+                _p[node, 0] = (_q * _density ** 4) / _Dp
+                _A[node, n5] = 22
+                _A[node, n6] = -8
+                _A[node, n7] = 1
+                _A[node, n9] = -8
+                _A[node, n10] = 2
+                _A[node, n11] = 1
+        return [_A, _p]
+
+    [A, p] = corner_mid_nodes(supports["top"], supports["left"],  # top-left-mid
+                                 i + 1, 0, 1, 2, i, i + 1, i + 2, i + 3, 2 * i, 2 * i + 1, 2 * i + 2, 3 * i + 1)
+    [A, p] = corner_mid_nodes(supports["top"], supports["right"],  # top-right-mid
+                                 i + i - 2, i - 1, i + i - 1, 2 * i + i - 1, i - 2, i + i - 2, 2 * i + i - 2,
+                                 3 * i + i - 2, i - 3, i + i - 3, 2 * i + i - 3, i + i - 4)
+    [A, p] = corner_mid_nodes(supports["bottom"], supports["left"],  # bottom-left-mid
+                                 (j - 2) * i + 1, (j - 1) * i, (j - 2) * i, (j - 3) * i, (j - 1) * i + 1,
+                                 (j - 2) * i + 1, (j - 3) * i + 1, (j - 4) * i + 1, (j - 1) * i + 2, (j - 2) * i + 2,
+                                 (j - 3) * i + 2, (j - 2) * i + 3)
+    [A, p] = corner_mid_nodes(supports["bottom"], supports["right"],  # bottom-right-mid
+                                 (j - 2) * i + i - 2, (j - 1) * i + i - 1, (j - 1) * i + i - 2, (j - 1) * i + i - 3,
+                                 (j - 2) * i + i - 1, (j - 2) * i + i - 2, (j - 2) * i + i - 3, (j - 2) * i + i - 4,
+                                 (j - 3) * i + i - 1, (j - 3) * i + i - 2, (j - 3) * i + i - 3, (j - 4) * i + i - 2)
 
     """ 6. Setting equations for edge-mid points (E) """
 
+    def edge_mid_nodes(edge, node, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12,
+                          _A=A, _p=p, _i=i, _j=j, _v=v, _density=density, _Dp=Dp, _q=q):
+        if edge == 0:
+            _p[node, 0] = (_q * _density ** 4) / _Dp
+            _A[node, n1] = 2 - _v
+            _A[node, n2] = -2 * (3 - _v)
+            _A[node, n3] = 2 - _v
+            _A[node, n4] = 1
+            _A[node, n5] = -8
+            _A[node, n6] = 19
+            _A[node, n7] = -8
+            _A[node, n8] = 1
+            _A[node, n9] = 2
+            _A[node, n10] = -8
+            _A[node, n11] = 2
+            _A[node, n12] = 1
+        elif edge == 1:
+            _p[node, 0] = (_q * _density ** 4) / _Dp
+            _A[node, n4] = 1
+            _A[node, n5] = -8
+            _A[node, n6] = 19
+            _A[node, n7] = -8
+            _A[node, n8] = 1
+            _A[node, n9] = 2
+            _A[node, n10] = -8
+            _A[node, n11] = 2
+            _A[node, n12] = 1
+        else:
+            _p[node, 0] = (_q * _density ** 4) / _Dp
+            _A[node, n4] = 1
+            _A[node, n5] = -8
+            _A[node, n6] = 21
+            _A[node, n7] = -8
+            _A[node, n8] = 1
+            _A[node, n9] = 2
+            _A[node, n10] = -8
+            _A[node, n11] = 2
+            _A[node, n12] = 1
+        return [_A, _p]
+
+    for m in range(i + 2, i + i - 2, 1):    # top
+        [A, p] = edge_mid_nodes(supports["top"],
+                                m, -1 * i + m - 1, -1 * i + m, -1 * i + m + 1, m - 2, m - 1, m, m + 1, m + 2, i + m - 1,
+                                i + m, i + m + 1, 2 * i + m)
+    for m in range(2 * i + 1, (j - 2) * i + 1, i):  # left
+        [A, p] = edge_mid_nodes(supports["left"],
+                                m, -1 * i + m - 1, m - 1, i + m - 1, -2 * i + m, -1 * i + m, m, i + m, 2 * i + m,
+                                -1 * i + m + 1, m + 1, i + m + 1, m + 2)
+    for m in range((j - 2) * i + 2, (j - 2) * i + i - 2, 1):  # bottom
+        [A, p] = edge_mid_nodes(supports["bottom"],
+                                m, i + m - 1, i + m, i + m + 1, m - 2, m - 1, m, m + 1, m + 2, -1 * i + m - 1,
+                                -1 * i + m, -1 * i + m + 1, -2 * i + m)
+    for m in range(2*i + i - 2, (j - 2) * i + i - 2, i):  # right
+        [A, p] = edge_mid_nodes(supports["right"],
+                                m, -1 * i + m + 1, m + 1, -1 * i + m + 1, -2 * i + m, -1 * i + m, m, i + m, 2 * i + m,
+                                -1 * i + m - 1, m - 1, i + m - 1, m - 2)
+
     """ 7. Setting equations for mid points (F) """
 
+    def mid_nodes(node, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13,
+                          _A=A, _p=p, _i=i, _j=j, _v=v, _density=density, _Dp=Dp, _q=q):
+
+        _p[node, 0] = (_q * _density ** 4) / _Dp
+        _A[node, n1] = 1
+        _A[node, n2] = 2
+        _A[node, n3] = -8
+        _A[node, n4] = 2
+        _A[node, n5] = 1
+        _A[node, n6] = -8
+        _A[node, n7] = 20
+        _A[node, n8] = -8
+        _A[node, n9] = 1
+        _A[node, n10] = 2
+        _A[node, n11] = -8
+        _A[node, n12] = 2
+        _A[node, n13] = 1
+        return [_A, _p]
+
+    for vm in range(2, j - 2, 1):
+        for m in range(2, i - 2, 1):
+            [A, p] = mid_nodes(vm * i + m, (vm - 2) * i + m, (vm - 1) * i + m - 1, (vm - 1) * i + m,
+                               (vm - 1) * i + m + 1, vm * i + m - 2, vm * i + m - 1, vm * i + m, vm * i + m + 1,
+                               vm * i + m + 2, (vm + 1) * i + m - 1, (vm + 1) * i + m, (vm + 1) * i + m + 1,
+                               (vm + 2) * i + m)
+
     """ 8. Calculation of Aw = p equation """
-    wf = A  # This line would be removed, it is only for testing A matrix
-    return wf
+
+    wf = np.linalg.solve(A, p)
+    W = np.zeros((i, j))
+    s = 0
+    for vm in range(j):
+        for m in range(i):
+            W[vm, m] = wf[s, 0]
+            s += 1
+
+    return W
 
 
 def compute_shield(displacements, Ds, q, supports, density, v):
@@ -172,17 +403,17 @@ if __name__ == '__main__':
 
     class Anyclass(object):
         def __init__(self):
-            self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((4, 4))]
+            self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((5, 5))]
 
 
     a = Anyclass()
     b = 2
     c = 5
     d = {
-        "bottom": 1,
-        "left": 1,
-        "right": 0,
-        "top": 1
+        "bottom": 2,
+        "left": 0,
+        "right": 2,
+        "top": 0
         }
     e = 1
     f = 0.3
