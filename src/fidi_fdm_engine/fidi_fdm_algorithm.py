@@ -2,6 +2,7 @@
     in each node of regular mesh using finite differences method"""
 
 import numpy as np
+import datetime
 
 
 def compute_plate(displacements, Dp, q, supports, density, v):
@@ -281,18 +282,18 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         return [_A, _p]
 
     [A, p] = corner_mid_nodes(supports["top"], supports["left"],  # top-left-mid
-                                 i + 1, 0, 1, 2, i, i + 1, i + 2, i + 3, 2 * i, 2 * i + 1, 2 * i + 2, 3 * i + 1)
+                              i + 1, 0, 1, 2, i, i + 1, i + 2, i + 3, 2 * i, 2 * i + 1, 2 * i + 2, 3 * i + 1)
     [A, p] = corner_mid_nodes(supports["top"], supports["right"],  # top-right-mid
-                                 i + i - 2, i - 1, i + i - 1, 2 * i + i - 1, i - 2, i + i - 2, 2 * i + i - 2,
-                                 3 * i + i - 2, i - 3, i + i - 3, 2 * i + i - 3, i + i - 4)
+                              i + i - 2, i - 1, i - 2, i - 3, i + i - 1, i + i - 2, i + i - 3,
+                              i + i - 4, 2 * i + i - 1, 2 * i + i - 2, 2 * i + i - 3, 3 * i + i - 2)
     [A, p] = corner_mid_nodes(supports["bottom"], supports["left"],  # bottom-left-mid
-                                 (j - 2) * i + 1, (j - 1) * i, (j - 2) * i, (j - 3) * i, (j - 1) * i + 1,
-                                 (j - 2) * i + 1, (j - 3) * i + 1, (j - 4) * i + 1, (j - 1) * i + 2, (j - 2) * i + 2,
-                                 (j - 3) * i + 2, (j - 2) * i + 3)
+                              (j - 2) * i + 1, (j - 1) * i, (j - 1) * i + 1, (j - 1) * i + 2, (j - 2) * i,
+                              (j - 2) * i + 1, (j - 2) * i + 2, (j - 2) * i + 3, (j - 3) * i, (j - 3) * i + 1,
+                              (j - 3) * i + 2, (j - 4) * i + 1)
     [A, p] = corner_mid_nodes(supports["bottom"], supports["right"],  # bottom-right-mid
-                                 (j - 2) * i + i - 2, (j - 1) * i + i - 1, (j - 1) * i + i - 2, (j - 1) * i + i - 3,
-                                 (j - 2) * i + i - 1, (j - 2) * i + i - 2, (j - 2) * i + i - 3, (j - 2) * i + i - 4,
-                                 (j - 3) * i + i - 1, (j - 3) * i + i - 2, (j - 3) * i + i - 3, (j - 4) * i + i - 2)
+                              (j - 2) * i + i - 2, (j - 1) * i + i - 1, (j - 1) * i + i - 2, (j - 1) * i + i - 3,
+                              (j - 2) * i + i - 1, (j - 2) * i + i - 2, (j - 2) * i + i - 3, (j - 2) * i + i - 4,
+                              (j - 3) * i + i - 1, (j - 3) * i + i - 2, (j - 3) * i + i - 3, (j - 4) * i + i - 2)
 
     """ 6. Setting equations for edge-mid points (E) """
 
@@ -350,7 +351,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
                                 -1 * i + m, -1 * i + m + 1, -2 * i + m)
     for m in range(2*i + i - 2, (j - 2) * i + i - 2, i):  # right
         [A, p] = edge_mid_nodes(supports["right"],
-                                m, -1 * i + m + 1, m + 1, -1 * i + m + 1, -2 * i + m, -1 * i + m, m, i + m, 2 * i + m,
+                                m, -1 * i + m + 1, m + 1, i + m + 1, -2 * i + m, -1 * i + m, m, i + m, 2 * i + m,
                                 -1 * i + m - 1, m - 1, i + m - 1, m - 2)
 
     """ 7. Setting equations for mid points (F) """
@@ -388,10 +389,9 @@ def compute_plate(displacements, Dp, q, supports, density, v):
     s = 0
     for vm in range(j):
         for m in range(i):
-            W[vm, m] = wf[s, 0]
+            W[m, vm] = round(wf[s, 0], 14)
             s += 1
-
-    return W
+    return W.T
 
 
 def compute_shield(displacements, Ds, q, supports, density, v):
@@ -401,21 +401,24 @@ def compute_shield(displacements, Ds, q, supports, density, v):
 
 if __name__ == '__main__':
 
-    class Anyclass(object):
+    class TestMeshClass(object):
         def __init__(self):
             self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((5, 5))]
 
 
-    a = Anyclass()
-    b = 2
-    c = 5
-    d = {
-        "bottom": 2,
-        "left": 0,
-        "right": 2,
-        "top": 0
-        }
-    e = 1
-    f = 0.3
-    g = compute_plate(a, b, c, d, e, f)
+    test_mesh = TestMeshClass()
+    test_flexural_stiffness = 0.2
+    test_load = 5
+    test_supports = {           # 0 - free end  1 - hinged  2 - fixed
+                    "bottom": 0,
+                    "left": 2,
+                    "right": 2,
+                    "top": 0
+                    }
+    test_density = 0.1
+    test_poisson_ratio = 0.3
+    start = datetime.datetime.now()
+    g = compute_plate(test_mesh, test_flexural_stiffness, test_load, test_supports, test_density, test_poisson_ratio)
+    duration = datetime.datetime.now() - start   # time of calculations
     print(g)
+    print(duration)
