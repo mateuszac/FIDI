@@ -3,6 +3,8 @@
 
 import numpy as np
 import datetime
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 
 def compute_plate(displacements, Dp, q, supports, density, v):
@@ -40,7 +42,6 @@ def compute_plate(displacements, Dp, q, supports, density, v):
     #    Initial setting of matrices :
 
     A = np.zeros((n, n))
-    w = wf.flatten()
     p = np.ones((n, 1))
 
     """ 3. Setting equations for corner points (A) """
@@ -403,7 +404,7 @@ if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [np.ones((4, 4)), np.ones((5, 5)), np.ones((5, 5))]
+            self.data = [None, None, np.ones((50, 50))]
 
 
     test_mesh = TestMeshClass()
@@ -411,14 +412,18 @@ if __name__ == '__main__':
     test_load = 5
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
                     "bottom": 0,
-                    "left": 2,
-                    "right": 2,
-                    "top": 0
+                    "left": 1,
+                    "right": 1,
+                    "top": 1
                     }
-    test_density = 0.1
+    test_density = 0.5
     test_poisson_ratio = 0.3
     start = datetime.datetime.now()
     g = compute_plate(test_mesh, test_flexural_stiffness, test_load, test_supports, test_density, test_poisson_ratio)
     duration = datetime.datetime.now() - start   # time of calculations
     print(g)
     print(duration)
+
+    plt.imshow(g, extent=(0, 49, 0, 49),
+               interpolation='hermite', cmap=cm.inferno)
+    plt.show()
