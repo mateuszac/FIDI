@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="button_icons">
+    <file>sprites/button_icons/plate_button.png</file>
+    <file>sprites/button_icons/shell_button.png</file>
+    <file>sprites/button_icons/shield_button.png</file>
+  </qresource>
+</RCC>
