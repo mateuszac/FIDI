@@ -404,7 +404,7 @@ if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [None, None, np.ones((50, 50))]
+            self.data = [None, None, np.ones((49, 49))]
 
 
     test_mesh = TestMeshClass()
@@ -413,8 +413,8 @@ if __name__ == '__main__':
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
                     "bottom": 0,
                     "left": 1,
-                    "right": 1,
-                    "top": 1
+                    "right": 2,
+                    "top": 0
                     }
     test_density = 0.5
     test_poisson_ratio = 0.3
@@ -424,6 +424,6 @@ if __name__ == '__main__':
     print(g)
     print(duration)
 
-    plt.imshow(g, extent=(0, 49, 0, 49),
+    plt.imshow(g, extent=(0, 50, 0, 50),
                interpolation='hermite', cmap=cm.inferno)
     plt.show()

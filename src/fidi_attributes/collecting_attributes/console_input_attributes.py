@@ -71,7 +71,7 @@ def type_input(description):
 
 
 def console_collecting_attributes():
-    """name of element"""
+    """function collecting attributes into established json dictionary via console"""
 
     while True:
         name = str(input("enter the name of element "))
