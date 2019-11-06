@@ -5,6 +5,7 @@ import numpy as np
 import datetime
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib
 
 
 def compute_plate(displacements, Dp, q, supports, density, v):
@@ -411,9 +412,9 @@ if __name__ == '__main__':
     test_flexural_stiffness = 0.2
     test_load = 5
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 0,
+                    "bottom": 2,
                     "left": 1,
-                    "right": 2,
+                    "right": 1,
                     "top": 0
                     }
     test_density = 0.5
@@ -423,7 +424,13 @@ if __name__ == '__main__':
     duration = datetime.datetime.now() - start   # time of calculations
     print(g)
     print(duration)
-
-    plt.imshow(g, extent=(0, 50, 0, 50),
-               interpolation='hermite', cmap=cm.inferno)
-    plt.show()
+    fig, ax = plt.subplots(1,2)
+    cmap = cm.get_cmap(name='jet', lut=40)
+    norm = matplotlib.colors.Normalize()
+    mappable = matplotlib.cm.ScalarMappable(cmap= cmap, norm=norm)
+    mappable.set_array(g)
+    mappable.autoscale()
+    matplotlib.pyplot.colorbar(mappable, ax[1])
+    ax[0].imshow(g, extent=(0, 50, 0, 50), interpolation='hermite', cmap=cmap)
+    mappable.changed()
+    fig.show()

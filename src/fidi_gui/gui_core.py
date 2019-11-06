@@ -104,10 +104,10 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
 
     def warning(self, text):
         """Opens message box, that informs user input is inappropriate"""
-        self.warning_window = QtWidgets.QMessageBox()
-        self.warning_window.setText(text)
-        self.warning_window.show()
-        self.warning_window.exec()
+        warning_window = QtWidgets.QMessageBox()
+        warning_window.setText(text)
+        #warning_window.show()
+        warning_window.exec()
 
     def gui_input(self, inp):
         """Prevents from entering inappropriate input"""
