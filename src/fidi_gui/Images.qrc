@@ -4,4 +4,11 @@
     <file>sprites/button_icons/shell_button.png</file>
     <file>sprites/button_icons/shield_button.png</file>
   </qresource>
+  <qresource prefix="menu_pictures">
+    <file>sprites/menu_pictures/picture_of_quantities.png</file>
+    <file>sprites/menu_pictures/diagram_of_plate_forces.png</file>
+    <file>sprites/menu_pictures/diagram_of_shell_forces.png</file>
+    <file>sprites/menu_pictures/diagram_of_shield_forces.png</file>
+    <file>sprites/menu_pictures/positive_sign_direction.png</file>
+  </qresource>
 </RCC>

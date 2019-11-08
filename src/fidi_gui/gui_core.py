@@ -71,25 +71,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.shield_window.show()
         # Added functions :
         self.ui.actionAbout_FIDI.triggered.connect(self.open_info)
-        self.ui.NameInput.editingFinished.connect(self.shield_data)
-        self.ui.ThicknessInput.editingFinished.connect(self.shield_data)
-        self.ui.WidthInput.editingFinished.connect(self.shield_data)
-        self.ui.HeightInput.editingFinished.connect(self.shield_data)
-        self.ui.DensityInput.editingFinished.connect(self.shield_data)
-        self.ui.EInput.editingFinished.connect(self.shield_data)
-        self.ui.vInput.editingFinished.connect(self.shield_data)
-        self.ui.XBInput.editingFinished.connect(self.shield_data)
-        self.ui.XLInput.editingFinished.connect(self.shield_data)
-        self.ui.XRInput.editingFinished.connect(self.shield_data)
-        self.ui.XTInput.editingFinished.connect(self.shield_data)
-        self.ui.YBInput.editingFinished.connect(self.shield_data)
-        self.ui.YLInput.editingFinished.connect(self.shield_data)
-        self.ui.YRInput.editingFinished.connect(self.shield_data)
-        self.ui.YTInput.editingFinished.connect(self.shield_data)
-        self.ui.BottomSupportInput.currentIndexChanged.connect(self.shield_data)
-        self.ui.TopSupportInput.currentIndexChanged.connect(self.shield_data)
-        self.ui.LeftSupportInput.currentIndexChanged.connect(self.shield_data)
-        self.ui.RightSupportInput.currentIndexChanged.connect(self.shield_data)
+        self.ui.LoadButton.released.connect(self.check_shield_data)
 
     def new_shell(self):
         """Opens shell window, imports all widgets from QTdesigner file and gives functionality to widgets
@@ -106,7 +88,6 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         """Opens message box, that informs user input is inappropriate"""
         warning_window = QtWidgets.QMessageBox()
         warning_window.setText(text)
-        #warning_window.show()
         warning_window.exec()
 
     def gui_input(self, inp):
@@ -117,25 +98,25 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             pass
         return inp
 
-    def shield_data(self):
+    def check_shield_data(self):
         """Checking if every attribute is proper and ready to save, then saving them in variables"""
         type_of_element = 1
         name = self.gui_input(attributes.gui_name(self.ui.NameInput.text()))
-        thickness = self.gui_input(attributes.gui_positive_num_input(self.ui.ThicknessInput.text()))
-        width_input = self.gui_input(attributes.gui_positive_num_input(self.ui.WidthInput.text()))
-        height_input = self.gui_input(attributes.gui_positive_num_input(self.ui.HeightInput.text()))
-        density = self.gui_input(attributes.gui_positive_num_input(self.ui.DensityInput.text()))
-        E = self.gui_input(attributes.gui_positive_num_input(self.ui.EInput.text()))
-        v = self.gui_input(attributes.gui_positive_num_input(self.ui.vInput.text()))
+        thickness = self.gui_input(attributes.gui_positive_num_input(self.ui.ThicknessInput.value()))
+        width_input = self.gui_input(attributes.gui_positive_num_input(self.ui.WidthInput.value()))
+        height_input = self.gui_input(attributes.gui_positive_num_input(self.ui.HeightInput.value()))
+        density = self.gui_input(attributes.gui_positive_num_input(self.ui.DensityInput.value()))
+        E = self.gui_input(attributes.gui_positive_num_input(self.ui.EInput.value()))
+        v = self.gui_input(attributes.gui_positive_num_input(self.ui.vInput.value()))
 
-        x_left = self.gui_input(attributes.gui_num_input(self.ui.XLInput.text()))
-        x_right = self.gui_input(attributes.gui_num_input(self.ui.XRInput.text()))
-        x_bottom = self.gui_input(attributes.gui_num_input(self.ui.XBInput.text()))
-        x_top = self.gui_input(attributes.gui_num_input(self.ui.XTInput.text()))
-        y_left = self.gui_input(attributes.gui_num_input(self.ui.YLInput.text()))
-        y_right = self.gui_input(attributes.gui_num_input(self.ui.YRInput.text()))
-        y_bottom = self.gui_input(attributes.gui_num_input(self.ui.YBInput.text()))
-        y_top = self.gui_input(attributes.gui_num_input(self.ui.YTInput.text()))
+        x_left = self.gui_input(attributes.gui_num_input(self.ui.XLInput.value()))
+        x_right = self.gui_input(attributes.gui_num_input(self.ui.XRInput.value()))
+        x_bottom = self.gui_input(attributes.gui_num_input(self.ui.XBInput.value()))
+        x_top = self.gui_input(attributes.gui_num_input(self.ui.XTInput.value()))
+        y_left = self.gui_input(attributes.gui_num_input(self.ui.YLInput.value()))
+        y_right = self.gui_input(attributes.gui_num_input(self.ui.YRInput.value()))
+        y_bottom = self.gui_input(attributes.gui_num_input(self.ui.YBInput.value()))
+        y_top = self.gui_input(attributes.gui_num_input(self.ui.YTInput.value()))
 
         support_left = self.gui_input(attributes.gui_support_input(self.ui.LeftSupportInput.currentText()))
         support_right = self.gui_input(attributes.gui_support_input(self.ui.RightSupportInput.currentText()))
