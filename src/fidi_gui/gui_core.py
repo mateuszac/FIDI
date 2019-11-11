@@ -24,6 +24,13 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ShieldButton.clicked.connect(self.new_shield)
         self.ShellButton.clicked.connect(self.new_shell)
 
+    def new_element(self):
+        """Opens next window, that allows to create or load another element
+        """
+        self.new_app = QtWidgets.QMainWindow()
+        self.next_app = FidiInterface()
+        self.next_app.show()
+
     def open_info(self):
         """Opens info window, imports all widgets from QTdesigner file and gives functionality to widgets
         """
@@ -70,6 +77,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.shield_window.setWindowTitle("FIDI - Shield")
         self.shield_window.show()
         # Added functions :
+        self.ui.actionNew.triggered.connect(self.new_element)
         self.ui.actionAbout_FIDI.triggered.connect(self.open_info)
         self.ui.LoadButton.released.connect(self.check_shield_data)
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>694</width>
-    <height>568</height>
+    <width>757</width>
+    <height>571</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1179,7 +1179,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>694</width>
+     <width>757</width>
      <height>21</height>
     </rect>
    </property>
@@ -1188,7 +1188,7 @@
      <string>File</string>
     </property>
     <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
+    <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
     <addaction name="actionClose"/>
@@ -1208,9 +1208,9 @@
     <string>New element</string>
    </property>
   </action>
-  <action name="actionOpen">
+  <action name="actionLoad">
    <property name="text">
-    <string>Open</string>
+    <string>Load</string>
    </property>
   </action>
   <action name="actionSave">
@@ -1251,6 +1251,22 @@
     <hint type="destinationlabel">
      <x>346</x>
      <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad</sender>
+   <signal>triggered()</signal>
+   <receiver>LoadButton</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>67</y>
     </hint>
    </hints>
   </connection>

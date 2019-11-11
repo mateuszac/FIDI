@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'shield_window.ui',
 # licensing of 'shield_window.ui' applies.
 #
-# Created: Fri Nov  8 22:44:11 2019
+# Created: Mon Nov 11 23:20:23 2019
 #      by: pyside2-uic  running on PySide2 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainShieldWindow(object):
     def setupUi(self, MainShieldWindow):
         MainShieldWindow.setObjectName("MainShieldWindow")
-        MainShieldWindow.resize(694, 568)
+        MainShieldWindow.resize(757, 571)
         self.ShieldWindow = QtWidgets.QWidget(MainShieldWindow)
         self.ShieldWindow.setObjectName("ShieldWindow")
         self.gridLayout = QtWidgets.QGridLayout(self.ShieldWindow)
@@ -542,7 +542,7 @@ class Ui_MainShieldWindow(object):
         self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainShieldWindow.setCentralWidget(self.ShieldWindow)
         self.menubar = QtWidgets.QMenuBar(MainShieldWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 694, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 757, 21))
         self.menubar.setObjectName("menubar")
         self.menuGeometry = QtWidgets.QMenu(self.menubar)
         self.menuGeometry.setObjectName("menuGeometry")
@@ -554,8 +554,8 @@ class Ui_MainShieldWindow(object):
         MainShieldWindow.setStatusBar(self.statusbar)
         self.actionNew = QtWidgets.QAction(MainShieldWindow)
         self.actionNew.setObjectName("actionNew")
-        self.actionOpen = QtWidgets.QAction(MainShieldWindow)
-        self.actionOpen.setObjectName("actionOpen")
+        self.actionLoad = QtWidgets.QAction(MainShieldWindow)
+        self.actionLoad.setObjectName("actionLoad")
         self.actionSave = QtWidgets.QAction(MainShieldWindow)
         self.actionSave.setObjectName("actionSave")
         self.actionSave_as = QtWidgets.QAction(MainShieldWindow)
@@ -565,7 +565,7 @@ class Ui_MainShieldWindow(object):
         self.actionAbout_FIDI = QtWidgets.QAction(MainShieldWindow)
         self.actionAbout_FIDI.setObjectName("actionAbout_FIDI")
         self.menuGeometry.addAction(self.actionNew)
-        self.menuGeometry.addAction(self.actionOpen)
+        self.menuGeometry.addAction(self.actionLoad)
         self.menuGeometry.addAction(self.actionSave)
         self.menuGeometry.addAction(self.actionSave_as)
         self.menuGeometry.addAction(self.actionClose)
@@ -577,6 +577,7 @@ class Ui_MainShieldWindow(object):
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainShieldWindow.close)
+        QtCore.QObject.connect(self.actionLoad, QtCore.SIGNAL("triggered()"), self.LoadButton.click)
         QtCore.QMetaObject.connectSlotsByName(MainShieldWindow)
 
     def retranslateUi(self, MainShieldWindow):
@@ -618,7 +619,7 @@ class Ui_MainShieldWindow(object):
         self.menuGeometry.setTitle(QtWidgets.QApplication.translate("MainShieldWindow", "File", None, -1))
         self.menuLoads.setTitle(QtWidgets.QApplication.translate("MainShieldWindow", "Info", None, -1))
         self.actionNew.setText(QtWidgets.QApplication.translate("MainShieldWindow", "New element", None, -1))
-        self.actionOpen.setText(QtWidgets.QApplication.translate("MainShieldWindow", "Open", None, -1))
+        self.actionLoad.setText(QtWidgets.QApplication.translate("MainShieldWindow", "Load", None, -1))
         self.actionSave.setText(QtWidgets.QApplication.translate("MainShieldWindow", "Save", None, -1))
         self.actionSave_as.setText(QtWidgets.QApplication.translate("MainShieldWindow", "Save as...", None, -1))
         self.actionClose.setText(QtWidgets.QApplication.translate("MainShieldWindow", "Close", None, -1))
