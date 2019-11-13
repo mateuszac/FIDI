@@ -2,8 +2,8 @@
 attributes from existing json file"""
 
 import json
-from src.fidi_fdm_engine import fidi_fdm_algorithm as fdm  # importing functions responsible for FDM algorithm
-from src.fidi_fdm_engine import fidi_mesh as stat          # importing classes containing statical quantities
+from fidi.fdm_engine import fdm_algorithm as fdm  # importing functions responsible for FDM algorithm
+from fidi.fdm_engine import mesh as stat          # importing classes containing statical quantities
 
 
 def fidi_load_file(filename):
@@ -11,7 +11,7 @@ def fidi_load_file(filename):
 
     try:
 
-        with open('../fidi_attributes/json_files/{}.json'.format(filename)) as starting_file:
+        with open('../attributes/json_files/{}.json'.format(filename)) as starting_file:
             return json.load(starting_file)
 
     except FileNotFoundError:
@@ -19,7 +19,7 @@ def fidi_load_file(filename):
         print("There is no {}.json in json_files folder".format(filename))
 
 
-def create_element():  # Later I will add possibility of using argument of filename instead of input
+def create_element():
     """This function creates new Prism object"""
     _data = fidi_load_file(input('Please enter the name of file to load'))
     if _data['object_type'] == "plate":
@@ -146,8 +146,8 @@ class Plate(Prism):
 
     def compute(self):
         self._computed = True
-        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate,
-                          self._supports, self._density, self._material["v"])
+        self._displacements[2] = fdm.compute_plate(self._displacements, self._Dp, self._loads_plate,
+                                                   self._supports, self._density, self._material["v"])
 
 
 class Shell(Shield, Plate):

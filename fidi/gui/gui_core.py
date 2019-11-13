@@ -3,8 +3,8 @@ assigned in QTdesigner - opening other windows and importing given data"""
 
 from PySide2 import QtWidgets
 
-from src.fidi_gui.Ui import starting_window, about_fidi, plate_window, shield_window, shell_window
-from src.fidi_attributes.collecting_attributes import gui_input_attributes as attributes
+from fidi.gui.Ui import starting_window, about_fidi, plate_window, shield_window, shell_window
+from fidi.attributes.collecting_attributes import gui_input_attributes as att
 
 
 class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
@@ -109,30 +109,30 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
     def check_shield_data(self):
         """Checking if every attribute is proper and ready to save, then saving them in variables"""
         type_of_element = 1
-        name = self.gui_input(attributes.gui_name(self.ui.NameInput.text()))
-        thickness = self.gui_input(attributes.gui_positive_num_input(self.ui.ThicknessInput.value()))
-        width_input = self.gui_input(attributes.gui_positive_num_input(self.ui.WidthInput.value()))
-        height_input = self.gui_input(attributes.gui_positive_num_input(self.ui.HeightInput.value()))
-        density = self.gui_input(attributes.gui_positive_num_input(self.ui.DensityInput.value()))
-        E = self.gui_input(attributes.gui_positive_num_input(self.ui.EInput.value()))
-        v = self.gui_input(attributes.gui_positive_num_input(self.ui.vInput.value()))
+        name = self.gui_input(att.gui_name(self.ui.NameInput.text()))
+        thickness = self.gui_input(att.gui_positive_num_input(self.ui.ThicknessInput.value()))
+        width_input = self.gui_input(att.gui_positive_num_input(self.ui.WidthInput.value()))
+        height_input = self.gui_input(att.gui_positive_num_input(self.ui.HeightInput.value()))
+        density = self.gui_input(att.gui_positive_num_input(self.ui.DensityInput.value()))
+        E = self.gui_input(att.gui_positive_num_input(self.ui.EInput.value()))
+        v = self.gui_input(att.gui_positive_num_input(self.ui.vInput.value()))
 
-        x_left = self.gui_input(attributes.gui_num_input(self.ui.XLInput.value()))
-        x_right = self.gui_input(attributes.gui_num_input(self.ui.XRInput.value()))
-        x_bottom = self.gui_input(attributes.gui_num_input(self.ui.XBInput.value()))
-        x_top = self.gui_input(attributes.gui_num_input(self.ui.XTInput.value()))
-        y_left = self.gui_input(attributes.gui_num_input(self.ui.YLInput.value()))
-        y_right = self.gui_input(attributes.gui_num_input(self.ui.YRInput.value()))
-        y_bottom = self.gui_input(attributes.gui_num_input(self.ui.YBInput.value()))
-        y_top = self.gui_input(attributes.gui_num_input(self.ui.YTInput.value()))
+        x_left = self.gui_input(att.gui_num_input(self.ui.XLInput.value()))
+        x_right = self.gui_input(att.gui_num_input(self.ui.XRInput.value()))
+        x_bottom = self.gui_input(att.gui_num_input(self.ui.XBInput.value()))
+        x_top = self.gui_input(att.gui_num_input(self.ui.XTInput.value()))
+        y_left = self.gui_input(att.gui_num_input(self.ui.YLInput.value()))
+        y_right = self.gui_input(att.gui_num_input(self.ui.YRInput.value()))
+        y_bottom = self.gui_input(att.gui_num_input(self.ui.YBInput.value()))
+        y_top = self.gui_input(att.gui_num_input(self.ui.YTInput.value()))
 
-        support_left = self.gui_input(attributes.gui_support_input(self.ui.LeftSupportInput.currentText()))
-        support_right = self.gui_input(attributes.gui_support_input(self.ui.RightSupportInput.currentText()))
-        support_top = self.gui_input(attributes.gui_support_input(self.ui.TopSupportInput.currentText()))
-        support_bottom = self.gui_input(attributes.gui_support_input(self.ui.BottomSupportInput.currentText()))
+        support_left = self.gui_input(att.gui_support_input(self.ui.LeftSupportInput.currentText()))
+        support_right = self.gui_input(att.gui_support_input(self.ui.RightSupportInput.currentText()))
+        support_top = self.gui_input(att.gui_support_input(self.ui.TopSupportInput.currentText()))
+        support_bottom = self.gui_input(att.gui_support_input(self.ui.BottomSupportInput.currentText()))
 
         loads_plate = None
-        loads_shield = attributes.shield_loads_dict(x_left, x_bottom, x_right, x_top, y_left, y_bottom, y_right, y_top)
+        loads_shield = att.shield_loads_dict(x_left, x_bottom, x_right, x_top, y_left, y_bottom, y_right, y_top)
 
         errorness = 0
 
@@ -146,7 +146,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if errorness == 0:
                 self.data_error = 0
 
-        self.data = attributes.gui_collecting_attributes(type_of_element, name, thickness, width_input, height_input,
+        self.data = att.gui_collecting_attributes(type_of_element, name, thickness, width_input, height_input,
                                                          density, E, v, loads_plate, loads_shield, support_left,
                                                          support_right, support_top, support_bottom)
         for i in range(len(self.data)): # DELETE THIS LINES

@@ -5,7 +5,7 @@ import numpy as np
 import datetime
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import matplotlib
+import matplotlib.colors
 
 
 def compute_plate(displacements, Dp, q, supports, density, v):
@@ -13,7 +13,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
 
     """ 1. Data """
 
-    wf = displacements.data[2]  # displacements on z dimension
+    wf = displacements[2]  # displacements on z dimension
     (i, j) = wf.shape  # i/j - number of nodes on x/y dimension
     n = i * j  # amount of nodes
 
@@ -405,10 +405,11 @@ if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [None, None, np.ones((49, 49))]
+            self.data = [None, None, np.zeros((11, 11))]
 
 
-    test_mesh = TestMeshClass()
+    test_class = TestMeshClass()
+    test_mesh = test_class.data
     test_flexural_stiffness = 0.2
     test_load = 5
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
@@ -424,13 +425,13 @@ if __name__ == '__main__':
     duration = datetime.datetime.now() - start   # time of calculations
     print(g)
     print(duration)
-    fig, ax = plt.subplots(1,2)
+    fig, ax = plt.subplots(1, 2)
     cmap = cm.get_cmap(name='jet', lut=40)
     norm = matplotlib.colors.Normalize()
-    mappable = matplotlib.cm.ScalarMappable(cmap= cmap, norm=norm)
+    mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
     mappable.set_array(g)
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
     ax[0].imshow(g, extent=(0, 50, 0, 50), interpolation='hermite', cmap=cmap)
     mappable.changed()
-    fig.show()
+    plt.show()

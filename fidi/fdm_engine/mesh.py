@@ -19,31 +19,31 @@ class Displacements(object):
 
     def __init__(self, mesh, element_type, supports):
         """ preallocate memory for 3D array """
-        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+        self.data = np.zeros((3, mesh.nodes[1], mesh.nodes[0]), dtype=np.float64)
         # boundary conditions from supports
         if element_type == "shell" or "plate":
             if supports["top"] == 1 or supports["top"] == 2:
-                self.data[0, :, 2] = 0
+                self.data[2, :, 0] = 0
             if supports["left"] == 1 or supports["left"] == 2:
-                self.data[:, 0, 2] = 0
+                self.data[2, 0, :] = 0
             if supports["bottom"] == 1 or supports["bottom"] == 2:
-                self.data[mesh.nodes[0] - 1, :, 2] = 0
+                self.data[2, :, mesh.nodes[0] - 1] = 0
             if supports["right"] == 1 or supports["right"] == 2:
-                self.data[:, mesh.nodes[1] - 1, 2] = 0
+                self.data[2, mesh.nodes[1] - 1, :] = 0
         if element_type == "shell" or "shield":  # Boundary conditions for wx and wy would be added later
             pass
 
     @property
     def wx(self):
-        return self.data[:, :, 0]
+        return self.data[0, :, :]
 
     @property
     def wy(self):
-        return self.data[:, :, 1]
+        return self.data[1, :, :]
 
     @property
     def wz(self):
-        return self.data[:, :, 2]
+        return self.data[2, :, :]
 
     @property
     def displacements(self):
@@ -55,31 +55,31 @@ class Rotations(object):
 
     def __init__(self, mesh, element_type, supports):
         """ preallocate memory for 3D array """
-        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+        self.data = np.zeros((3, mesh.nodes[1], mesh.nodes[0]), dtype=np.float64)
         # boundary conditions from supports
         if element_type == "shell" or "plate":
             if supports["top"] == 2:
-                self.data[0, :, 2] = 0
+                self.data[2, :, 0] = 0
             if supports["left"] == 2:
-                self.data[:, 0, 2] = 0
+                self.data[2, 0, :] = 0
             if supports["bottom"] == 2:
-                self.data[mesh.nodes[0] - 1, :, 2] = 0
+                self.data[2, :, mesh.nodes[0] - 1] = 0
             if supports["right"] == 2:
-                self.data[:, mesh.nodes[1] - 1, 2] = 0
+                self.data[2, mesh.nodes[1] - 1, :] = 0
         if element_type == "shell" or "shield": # Boundary conditions for wx and wy would be added later
             pass
 
     @property
     def fix(self):
-        return self.data[:, :, 0]
+        return self.data[0, :, :]
 
     @property
     def fiy(self):
-        return self.data[:, :, 1]
+        return self.data[1, :, :]
 
     @property
     def fiz(self):
-        return self.data[:, :, 2]
+        return self.data[2, :, :]
 
     @property
     def rotations(self):
@@ -92,19 +92,19 @@ class MembraneForces(object):
 
     def __init__(self, mesh):
         """ preallocate memory for 3D array """
-        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+        self.data = np.zeros((3, mesh.nodes[1], mesh.nodes[0]), dtype=np.float64)
 
     @property
     def nxx(self):
-        return self.data[:, :, 0]
+        return self.data[0, :, :]
 
     @property
     def nyy(self):
-        return self.data[:, :, 1]
+        return self.data[1, :, :]
 
     @property
     def nxy(self):
-        return self.data[:, :, 2]
+        return self.data[2, :, :]
 
     @property
     def forces(self):
@@ -117,19 +117,19 @@ class MembraneMoment(object):
 
     def __init__(self, mesh):
         """ preallocate memory for 3D array """
-        self.data = np.zeros((mesh.nodes[0], mesh.nodes[1], 3), dtype=np.float64)
+        self.data = np.zeros((3, mesh.nodes[1], mesh.nodes[0]), dtype=np.float64)
 
     @property
     def mxx(self):
-        return self.data[:, :, 0]
+        return self.data[0, :, :]
 
     @property
     def myy(self):
-        return self.data[:, :, 1]
+        return self.data[1, :, :]
 
     @property
     def mxy(self):
-        return self.data[:, :, 2]
+        return self.data[2, :, :]
 
     @property
     def moments(self):
@@ -153,7 +153,7 @@ if __name__ == '__main__':    # TEST
     AnyObject = AnyClass()
     prism = AnyObject.sup()
 
-    test_mesh = Mesh(2, 5, 0.1)
+    test_mesh = Mesh(0.1, 5, 2)
     test_displacement_matrix = Displacements(test_mesh, "plate", prism)
 
     print(test_displacement_matrix.wz)

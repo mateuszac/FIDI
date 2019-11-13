@@ -2,17 +2,17 @@
 attributes from user and saving it in json format"""
 
 import json
-from src.fidi_attributes.collecting_attributes import console_input_attributes as console
+from fidi.attributes.collecting_attributes import console_input_attributes as console
 
 
-def fidi_save_file(props):
+def console_save_file(props):
     """Function for saving properties of elements in json format"""
 
     filename = props[0]
 
     try:
 
-        with open('../prism_attributes/json_files/{}.json'.format(filename)):
+        with open('../attributes/json_files/{}.json'.format(filename)):
             answer = str(input("File named {}.json has already been created,"
                                " do you want to override this file [y/n]?".format(filename)))
             if answer == "n":
@@ -35,11 +35,11 @@ def fidi_save_file(props):
                            'density': props[9],
                            'supports': props[10]}
 
-        with open('../fidi_attributes/json_files/{}.json'.format(filename), 'w') as starting_file:
+        with open('../attributes/json_files/{}.json'.format(filename), 'w') as starting_file:
             starting_file.write(json.dumps(fidi_attributes, indent=4, sort_keys=True))
 
 
 if __name__ == '__main__':
 
     properties = console.console_collecting_attributes()
-    fidi_save_file(properties)
+    console_save_file(properties)

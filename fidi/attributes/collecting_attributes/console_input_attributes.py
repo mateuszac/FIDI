@@ -152,7 +152,7 @@ def console_collecting_attributes():
                                                           ' bottom boundary in [kN/m] ')
 
     elif type_of_element == 2 or type_of_element == 3:
-        loads_plate = num_input('enter the value of load in [kN/m] ')
+        loads_plate = num_input('enter the value of load in [kN/m2] ')
         # for now only uniformly distributed loads are taken into consideration
 
     """Boundary conditions - supports: 0 for free end, 1 for hinged connection and 2 for fixed connection"""
