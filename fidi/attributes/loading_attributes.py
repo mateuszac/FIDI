@@ -22,12 +22,15 @@ def fidi_load_file(filename):
 def create_element():
     """This function creates new Prism object"""
     _data = fidi_load_file(input('Please enter the name of file to load'))
-    if _data['object_type'] == "plate":
-        return Plate(_data)
-    elif _data['object_type'] == "shield":
-        return Shield(_data)
+    if _data is None:
+        return None
     else:
-        return Shell(_data)
+        if _data['object_type'] == "plate":
+            return Plate(_data)
+        elif _data['object_type'] == "shield":
+            return Shield(_data)
+        else:
+            return Shell(_data)
 
 
 def statical_quantities(width, height, density, element_type, supports):
@@ -49,7 +52,9 @@ class Prism(object):
         """ Loading all properties from existing json file """
 
         self._geometry = json_data['geometry']
+        self._geometry["thickness"] *= 0.01  # thickness in now in [m]
         self._material = json_data['material']
+        self._material["E"] *= 10**9  # modulus of elasticity is now in [N/m2]
         self._name = json_data['name']
         self._density = json_data['density']
         self._supports = json_data['supports']
@@ -117,6 +122,8 @@ class Shield(Prism):
         """ Loading all methods of any Prism object and shield loads"""
         super().__init__(json_data)
         self._loads_shield = json_data['loads_shield']
+        for load in self._loads_shield:
+            self._loads_shield[load] *= 1000  # loads are now in N/m
         # Stiffness of shield
         self._Ds = (self._material["E"] * self._geometry["height"]) / (1 - self._material["v"] ** 2)
 
@@ -137,6 +144,7 @@ class Plate(Prism):
         """ Loading all methods of any Prism object and plate loads"""
         super().__init__(json_data)
         self._loads_plate = json_data['loads_plate']
+        self._loads_plate *= 1000  # load is now in N/m2
         # Flexural stiffness of plate
         self._Dp = (self._material["E"]*self._geometry["height"]**3)/(12*(1-self._material["v"]**2))
 

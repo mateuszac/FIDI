@@ -134,21 +134,30 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         loads_plate = None
         loads_shield = att.shield_loads_dict(x_left, x_bottom, x_right, x_top, y_left, y_bottom, y_right, y_top)
 
-        errorness = 0
+        errorness = 0  # if value of errorness is 0, there is no data error and calculations may be done
+
+        [data, too_rare_mesh] = att.gui_collecting_attributes(type_of_element, name, thickness, width_input,
+                                                              height_input,
+                                                              density, E, v, loads_plate, loads_shield, support_left,
+                                                              support_right, support_top, support_bottom)
 
         for i in [type_of_element, name, thickness, width_input, height_input,
                   density, E, v, loads_plate, loads_shield, support_left,
                   support_right, support_top, support_bottom]:
-            if i == "error":
+            if i == "error"
                 errorness += 1
             else:
                 continue
-            if errorness == 0:
-                self.data_error = 0
 
-        self.data = att.gui_collecting_attributes(type_of_element, name, thickness, width_input, height_input,
-                                                         density, E, v, loads_plate, loads_shield, support_left,
-                                                         support_right, support_top, support_bottom)
+        if errorness == 0 and too_rare_mesh is False:
+            self.data_error = 0
+        elif too_rare_mesh is True:
+            self.data_error = 1
+            self.warning("Error, the mesh is too rare, please choose another density")
+        else:
+            self.data_error = 1
+
+        self.data = data
         for i in range(len(self.data)): # DELETE THIS LINES
             print(self.data[i])         # THERE ARE ONLY FOR TESTING
 

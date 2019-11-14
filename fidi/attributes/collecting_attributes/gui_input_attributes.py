@@ -72,6 +72,7 @@ def gui_collecting_attributes(type_of_element, name, thickness, width_input, hei
 
     """Geometry of prism, and density of regular mesh in [m] (dimensions are fitted to mesh)"""
 
+    too_rare_mesh = False
     width = density * round(width_input / density, 0)
     height = density * round(height_input / density, 0)
     Nx = int(width / density + 1)
@@ -79,7 +80,7 @@ def gui_collecting_attributes(type_of_element, name, thickness, width_input, hei
     if Nx > 4 and Ny > 4:
         pass
     else:
-        raise ValueError
+        too_rare_mesh = True
 
     """Information about object type"""
 
@@ -98,7 +99,7 @@ def gui_collecting_attributes(type_of_element, name, thickness, width_input, hei
                 'bottom': support_bottom}
     pass
 
-    return [name,
+    return [[name,
             thickness,
             width,
             height,
@@ -108,7 +109,7 @@ def gui_collecting_attributes(type_of_element, name, thickness, width_input, hei
             loads_shield,
             loads_plate,
             density,
-            supports]
+            supports], too_rare_mesh]
 
 
 if __name__ == '__main__':

@@ -84,7 +84,7 @@ def console_collecting_attributes():
 
     """Geometry of prism, and density of regular mesh in [m] (dimensions are fitted to mesh)"""
 
-    thickness = positive_num_input('enter the thickness of element in [m] ')
+    thickness = positive_num_input('enter the thickness of element in [cm] ')
 
     width_input = positive_num_input('enter the width of element in [m] ')
 
