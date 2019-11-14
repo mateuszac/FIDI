@@ -5,7 +5,7 @@
 
 * docs - folder for documentation
 * sandbox - folder for playing with source
-* src  - main source folder
+* fidi  - main source folder
 
 Python packages
 -------------------------
@@ -21,19 +21,11 @@ List of necessary python packages in order to run FIDI :
 Installation
 ------------
 
-At this moment program consists of 2 separate parts - GUI and file gathering and
-saving data from user.
+Program consists of 2 separate parts - GUI and console version.
 
-There is no ready to use setup file for GUI yet, however you may run it directly
-by execution source code.
-To run GUI download fidi_gui.py and Ui folder from gui_core.py located in FIDI/src/fidi_gui
-then save them in the same location. Now you are able to launch the program by compiling 
-fidi.gui.py in Python 3. 
-
-To run part of program responsible for gathering and saving data from user, you have to 
-download and save in the same location content of fidi_attributes folder located in FIDI/src,
-then you may run saving_attributes.py or loading_attributes, for more information check guide
-in FIDI/docs.
+To run any of it, you have to download fidi folder, install neceassary python packages and compile 
+file console_core.py from fidi/console for console version of fidi or file gui_core.py for gui version
+from fidi/gui
 
 Contribute
 ----------
