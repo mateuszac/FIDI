@@ -39,6 +39,23 @@ def console_save_file(props):
             starting_file.write(json.dumps(fidi_attributes, indent=4, sort_keys=True))
 
 
+def gui_save_file(props, filename):
+    """Function for saving properties of elements in json format"""
+
+    fidi_attributes = {
+                       'name': props[0],
+                       'geometry': {'thickness': props[1], 'width': props[2], 'height': props[3]},
+                       'material': {'E': props[4], 'v': props[5]},
+                       'object_type': props[6],
+                       'loads_shield': props[7],
+                       'loads_plate': props[8],
+                       'density': props[9],
+                       'supports': props[10]}
+
+    with open('../attributes/json_files/{}.json'.format(filename), 'w') as starting_file:
+        starting_file.write(json.dumps(fidi_attributes, indent=4, sort_keys=True))
+
+
 if __name__ == '__main__':
 
     properties = console.console_collecting_attributes()

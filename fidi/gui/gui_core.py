@@ -5,6 +5,7 @@ from PySide2 import QtWidgets
 
 from fidi.gui.Ui import starting_window, about_fidi, plate_window, shield_window, shell_window
 from fidi.attributes.collecting_attributes import gui_input_attributes as att
+from fidi.attributes.saving_attributes import gui_save_file
 
 
 class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
@@ -64,6 +65,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         FidiInterface.hide(self)
         self.plate_window.setWindowTitle("FIDI - Plate")
         self.plate_window.show()
+        self.ui.type = 2
         # Added functions :
 
     def new_shield(self):
@@ -76,10 +78,12 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         FidiInterface.hide(self)
         self.shield_window.setWindowTitle("FIDI - Shield")
         self.shield_window.show()
+        self.ui.type = 1
         # Added functions :
         self.ui.actionNew.triggered.connect(self.new_element)
         self.ui.actionAbout_FIDI.triggered.connect(self.open_info)
         self.ui.LoadButton.released.connect(self.check_shield_data)
+        self.ui.SaveButton.released.connect(self.save)
 
     def new_shell(self):
         """Opens shell window, imports all widgets from QTdesigner file and gives functionality to widgets
@@ -90,7 +94,57 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         FidiInterface.hide(self)
         self.shell_window.setWindowTitle("FIDI - Shell")
         self.shell_window.show()
+        self.ui.type = 3
         # Added functions :
+
+    def save(self):
+        """Saves attributes into json file in temporary folder json_files"""
+        type_of_element = self.ui.type
+        loads_plate = None
+        loads_shield = None
+        if type_of_element == 1 or type_of_element == 3:  # shields or shells
+            if type_of_element == 1:
+                loads_plate = None
+
+            x_left = self.ui.XLInput.value()
+            x_right = self.ui.XRInput.value()
+            x_bottom = self.ui.XBInput.value()
+            x_top = self.ui.XTInput.value()
+            y_left = self.ui.YLInput.value()
+            y_right = self.ui.YRInput.value()
+            y_bottom = self.ui.YBInput.value()
+            y_top = self.ui.YTInput.value()
+
+            loads_shield = att.shield_loads_dict(x_left, x_bottom, x_right, x_top, y_left, y_bottom, y_right, y_top)
+        if type_of_element == 2 or type_of_element == 3: # plates or shells
+            if type_of_element == 2:
+                loads_shield = None
+
+            loads_plate = self.ui.QInput.value()
+
+        input_data = att.gui_collecting_attributes(type_of_element, self.ui.NameInput.text(),
+                                                   self.ui.ThicknessInput.value(), self.ui.WidthInput.value(),
+                                                   self.ui.HeightInput.value(), self.ui.DensityInput.value(),
+                                                   self.ui.EInput.value(), self.ui.vInput.value(),
+                                                   loads_plate, loads_shield, self.ui.LeftSupportInput.currentText(),
+                                                   self.ui.RightSupportInput.currentText(),
+                                                   self.ui.TopSupportInput.currentText(),
+                                                   self.ui.BottomSupportInput.currentText())
+
+        if input_data[1] is True:
+            self.warning("Error, the mesh is too rare, please choose another density")
+        else:
+            filename = self.ui.NameInput.text()
+            try:
+                with open('../attributes/json_files/{}.json'.format(filename)):
+                    self.warning("File with that name already exists, please choose another")
+            except FileNotFoundError:
+                if filename != "":
+                    gui_save_file(input_data[0], filename)
+                    self.warning("File has been saved")
+                else:
+                    self.warning("You cannot save file with no name")
+
 
     def warning(self, text):
         """Opens message box, that informs user input is inappropriate"""
@@ -144,7 +198,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         for i in [type_of_element, name, thickness, width_input, height_input,
                   density, E, v, loads_plate, loads_shield, support_left,
                   support_right, support_top, support_bottom]:
-            if i == "error"
+            if i == "error":
                 errorness += 1
             else:
                 continue
