@@ -6,6 +6,7 @@ from PySide2 import QtWidgets
 from fidi.gui.Ui import starting_window, about_fidi, plate_window, shield_window, shell_window
 from fidi.attributes.collecting_attributes import gui_input_attributes as att
 from fidi.attributes.saving_attributes import gui_save_file
+import json
 
 
 class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
@@ -82,7 +83,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         # Added functions :
         self.ui.actionNew.triggered.connect(self.new_element)
         self.ui.actionAbout_FIDI.triggered.connect(self.open_info)
-        self.ui.LoadButton.released.connect(self.check_shield_data)
+        self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
 
     def new_shell(self):
@@ -145,6 +146,57 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
                 else:
                     self.warning("You cannot save file with no name")
 
+    def load(self):
+        """Loads attributes from json file into input boxes"""
+
+        file_name, file_ext = QtWidgets.QFileDialog.getOpenFileName(self, "Select json file")
+        data = None
+        type_of_element = self.ui.type
+
+        try:
+
+            with open(file_name) as file:
+                data = json.load(file)
+
+        except json.JSONDecodeError:
+
+            self.warning("Error, please choose proper .json file")
+
+        if data is not None:
+            try:
+                self.ui.NameInput.setProperty("text", (data["name"]))
+                self.ui.DensityInput.setProperty("value", data["density"])
+                self.ui.ThicknessInput.setProperty("value", data["geometry"]["thickness"])
+                self.ui.WidthInput.setProperty("value", data["geometry"]["width"])
+                self.ui.HeightInput.setProperty("value", data["geometry"]["height"])
+                self.ui.EInput.setProperty("value", data["material"]["E"])
+                self.ui.vInput.setProperty("value", data["material"]["v"])
+                # forces:
+                if type_of_element == 1 or type_of_element == 3:  # shields or shells
+                    self.ui.XLInput.setProperty("value", data["loads_shield"]["x_direction"]["left"])
+                    self.ui.XRInput.setProperty("value", data["loads_shield"]["x_direction"]["right"])
+                    self.ui.XBInput.setProperty("value", data["loads_shield"]["x_direction"]["bottom"])
+                    self.ui.XTInput.setProperty("value", data["loads_shield"]["x_direction"]["top"])
+                    self.ui.YLInput.setProperty("value", data["loads_shield"]["y_direction"]["left"])
+                    self.ui.YRInput.setProperty("value", data["loads_shield"]["y_direction"]["right"])
+                    self.ui.YBInput.setProperty("value", data["loads_shield"]["y_direction"]["bottom"])
+                    self.ui.YTInput.setProperty("value", data["loads_shield"]["y_direction"]["top"])
+                if type_of_element == 2 or type_of_element == 3:  # plates or shells
+                    self.ui.QInput.setProperty("value", data["loads_plate"])
+                # supports:
+                self.ui.LeftSupportInput.setProperty("currentText", data["supports"]["left"])
+                self.ui.RightSupportInput.setProperty("currentText", data["supports"]["right"])
+                self.ui.TopSupportInput.setProperty("currentText", data["supports"]["top"])
+                self.ui.BottomSupportInput.setProperty("currentText", data["supports"]["bottom"])
+                self.check_shield_data()  # check if every value is correct
+            except KeyError:
+                self.warning("Sorry, file is damaged")
+            except TypeError:
+                self.warning("Your element is another type (Shield/Plate/Shell)")
+            except FileNotFoundError:
+                pass
+        else:
+            pass
 
     def warning(self, text):
         """Opens message box, that informs user input is inappropriate"""
