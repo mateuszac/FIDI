@@ -122,8 +122,9 @@ class Shield(Prism):
         """ Loading all methods of any Prism object and shield loads"""
         super().__init__(json_data)
         self._loads_shield = json_data['loads_shield']
-        for load in self._loads_shield:
-            self._loads_shield[load] *= 1000  # loads are now in N/m
+        for direction in self._loads_shield:
+            for load in direction:
+                load *= 1000  # loads are now in N/m
         # Stiffness of shield
         self._Ds = (self._material["E"] * self._geometry["height"]) / (1 - self._material["v"] ** 2)
 

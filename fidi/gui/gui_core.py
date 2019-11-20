@@ -6,7 +6,9 @@ from PySide2 import QtWidgets
 from fidi.gui.Ui import starting_window, about_fidi, plate_window, shield_window, shell_window
 from fidi.attributes.collecting_attributes import gui_input_attributes as att
 from fidi.attributes.saving_attributes import gui_save_file
+from fidi.attributes import loading_attributes as obj
 import json
+import datetime
 
 
 class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
@@ -18,7 +20,9 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.setupUi(self)
         self.ui = None
         self.data = None
-        self.data_error = 1
+        self.prism = None
+        self.data_error = 0
+        self.stability_error = 0
         # Added functions :
         self.setWindowTitle("FIDI")
         self.InfoButton.clicked.connect(self.open_info)
@@ -63,11 +67,17 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.plate_window = QtWidgets.QMainWindow()
         self.ui = plate_window.Ui_MainPlateWindow()
         self.ui.setupUi(self.plate_window)
+        self.combobox()
         FidiInterface.hide(self)
         self.plate_window.setWindowTitle("FIDI - Plate")
         self.plate_window.show()
         self.ui.type = 2
         # Added functions :
+        self.ui.actionNew.triggered.connect(self.new_element)
+        self.ui.actionAbout_FIDI.triggered.connect(self.open_info)
+        self.ui.LoadButton.released.connect(self.load)
+        self.ui.SaveButton.released.connect(self.save)
+        self.ui.CalculateButton.released.connect(self.calculate)
 
     def new_shield(self):
         """Opens shield window, imports all widgets from QTdesigner file and gives functionality to widgets
@@ -85,6 +95,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ui.actionAbout_FIDI.triggered.connect(self.open_info)
         self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
+        self.ui.CalculateButton.released.connect(self.calculate)
 
     def new_shell(self):
         """Opens shell window, imports all widgets from QTdesigner file and gives functionality to widgets
@@ -92,14 +103,22 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.shell_window = QtWidgets.QMainWindow()
         self.ui = shell_window.Ui_MainShellWindow()
         self.ui.setupUi(self.shell_window)
+        self.combobox()
         FidiInterface.hide(self)
         self.shell_window.setWindowTitle("FIDI - Shell")
         self.shell_window.show()
         self.ui.type = 3
         # Added functions :
+        self.ui.actionNew.triggered.connect(self.new_element)
+        self.ui.actionAbout_FIDI.triggered.connect(self.open_info)
+        self.ui.LoadButton.released.connect(self.load)
+        self.ui.SaveButton.released.connect(self.save)
+        self.ui.CalculateButton.released.connect(self.calculate)
 
-    def save(self):
-        """Saves attributes into json file in temporary folder json_files"""
+    def gather_data(self):
+        """Gathers data from user and saves it into a list with dict containing
+         data and information if mesh is proper
+         """
         type_of_element = self.ui.type
         loads_plate = None
         loads_shield = None
@@ -117,20 +136,24 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             y_top = self.ui.YTInput.value()
 
             loads_shield = att.shield_loads_dict(x_left, x_bottom, x_right, x_top, y_left, y_bottom, y_right, y_top)
-        if type_of_element == 2 or type_of_element == 3: # plates or shells
+        if type_of_element == 2 or type_of_element == 3:  # plates or shells
             if type_of_element == 2:
                 loads_shield = None
 
             loads_plate = self.ui.QInput.value()
 
-        input_data = att.gui_collecting_attributes(type_of_element, self.ui.NameInput.text(),
-                                                   self.ui.ThicknessInput.value(), self.ui.WidthInput.value(),
-                                                   self.ui.HeightInput.value(), self.ui.DensityInput.value(),
-                                                   self.ui.EInput.value(), self.ui.vInput.value(),
-                                                   loads_plate, loads_shield, self.ui.LeftSupportInput.currentText(),
-                                                   self.ui.RightSupportInput.currentText(),
-                                                   self.ui.TopSupportInput.currentText(),
-                                                   self.ui.BottomSupportInput.currentText())
+        return att.gui_collecting_attributes(type_of_element, self.ui.NameInput.text(),
+                                             self.ui.ThicknessInput.value(), self.ui.WidthInput.value(),
+                                             self.ui.HeightInput.value(), self.ui.DensityInput.value(),
+                                             self.ui.EInput.value(), self.ui.vInput.value(),
+                                             loads_plate, loads_shield, self.ui.LeftSupportInput.currentText(),
+                                             self.ui.RightSupportInput.currentText(),
+                                             self.ui.TopSupportInput.currentText(),
+                                             self.ui.BottomSupportInput.currentText())
+
+    def save(self):
+        """Saves attributes into json file in temporary folder json_files"""
+        input_data = self.gather_data()
 
         if input_data[1] is True:
             self.warning("Error, the mesh is too rare, please choose another density")
@@ -198,6 +221,53 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         else:
             pass
 
+    def calculate(self):
+        """Creates prism object and uses compute method, different for each type of element"""
+
+        if self.data_error > 0:
+            self.check_shield_data()
+            if self.data_error > 0:
+                self.warning("Data error, please check if every attribute is proper")
+                return
+            else:
+                pass
+        else:
+            pass
+
+        self.stability_check()
+        if self.stability_error > 0:
+            self.warning("Structure is unstable")
+            return
+        else:
+            pass
+
+        input_data = self.gather_data()
+        type_of_element = self.ui.type
+
+        if input_data[1] is True:
+            self.warning("Error, the mesh is too rare, please choose another density")
+        else:
+            data = {
+                   'name': input_data[0][0],
+                   'geometry': {'thickness': input_data[0][1], 'width': input_data[0][2], 'height': input_data[0][3]},
+                   'material': {'E': input_data[0][4], 'v': input_data[0][5]},
+                   'object_type': input_data[0][6],
+                   'loads_shield': input_data[0][7],
+                   'loads_plate': input_data[0][8],
+                   'density': input_data[0][9],
+                   'supports': input_data[0][10]}
+            if type_of_element == 1:
+                self.prism = obj.Shield(data)
+            elif type_of_element == 2:
+                self.prism = obj.Plate(data)
+            else:
+                self.prism = obj.Shell(data)
+
+            start = datetime.datetime.now()
+            self.prism.compute()
+            duration = datetime.datetime.now() - start  # time of calculations
+            self.warning("Calculations completed, time of solving - {}".format(duration))
+
     def warning(self, text):
         """Opens message box, that informs user input is inappropriate"""
         warning_window = QtWidgets.QMessageBox()
@@ -211,6 +281,23 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         else:
             pass
         return inp
+
+    def stability_check(self):
+        """Checking if structure is stable, BDOF - blocked degrees of freedom """
+        BDOF = 0
+        for support in [self.ui.LeftSupportInput.currentText(), self.ui.RightSupportInput.currentText(),
+                        self.ui.BottomSupportInput.currentText(), self.ui.TopSupportInput.currentText()]:
+            if support == "Hinged":
+                BDOF += 1
+            elif support == "Fixed":
+                BDOF += 2
+            else:
+                continue
+
+        if BDOF <= 1:
+            self.stability_error = 1
+        else:
+            self.stability_error = 0
 
     def check_shield_data(self):
         """Checking if every attribute is proper and ready to save, then saving them in variables"""
