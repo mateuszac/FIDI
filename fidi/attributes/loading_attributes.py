@@ -2,7 +2,8 @@
 attributes from existing json file"""
 
 import json
-from fidi.fdm_engine import fdm_algorithm as fdm  # importing functions responsible for FDM algorithm
+from fidi.fdm_engine import fdm_plate_algorithm as fdm_plate  # importing functions responsible for plate algorithm
+from fidi.fdm_engine import fdm_shield_algorithm as fdm_shield  # importing functions responsible for shield algorithm
 from fidi.fdm_engine import mesh as stat          # importing classes containing statical quantities
 
 
@@ -134,7 +135,7 @@ class Shield(Prism):
 
     def compute(self):
         self._computed = True
-        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield,
+        fdm_shield.compute_shield(self._displacements, self._Ds, self._loads_shield,
                            self._supports, self._density, self._material["v"])
 
 
@@ -155,7 +156,7 @@ class Plate(Prism):
 
     def compute(self):
         self._computed = True
-        self._displacements[2] = fdm.compute_plate(self._displacements, self._Dp, self._loads_plate,
+        self._displacements[2] = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
                                                    self._supports, self._density, self._material["v"])
 
 
@@ -168,9 +169,9 @@ class Shell(Shield, Plate):
 
     def compute(self):
         self._computed = True
-        fdm.compute_plate(self._displacements, self._Dp, self._loads_plate,
+        fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
                           self._supports, self._density, self._material["v"])
-        fdm.compute_shield(self._displacements, self._Ds, self._loads_shield,
+        fdm_shield.compute_shield(self._displacements, self._Ds, self._loads_shield,
                            self._supports, self._density, self._material["v"])
 
 

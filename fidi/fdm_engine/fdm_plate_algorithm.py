@@ -1,5 +1,5 @@
 """This part of program is responsible for applying appropriate boundary conditions and computing values of displacement
-    in each node of regular mesh using finite differences method"""
+    in each node of regular mesh using finite differences method for plate objects"""
 
 import numpy as np
 import datetime
@@ -396,29 +396,24 @@ def compute_plate(displacements, Dp, q, supports, density, v):
     return W.T
 
 
-def compute_shield(displacements, Ds, q, supports, density, v):
-    """Apply boundary conditions for shield objects and compute values of displacement in every node of mesh"""
-    pass
-
-
 if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [None, None, np.zeros((11, 11))]
+            self.data = [None, None, np.zeros((120, 120))]
 
 
     test_class = TestMeshClass()
     test_mesh = test_class.data
     test_flexural_stiffness = 0.2
-    test_load = 5
+    test_load = 50
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
                     "bottom": 2,
-                    "left": 1,
-                    "right": 1,
-                    "top": 0
+                    "left": 0,
+                    "right": 0,
+                    "top": 1
                     }
-    test_density = 0.5
+    test_density = 3
     test_poisson_ratio = 0.3
     start = datetime.datetime.now()
     g = compute_plate(test_mesh, test_flexural_stiffness, test_load, test_supports, test_density, test_poisson_ratio)
@@ -432,6 +427,6 @@ if __name__ == '__main__':
     mappable.set_array(g)
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g, extent=(0, 50, 0, 50), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g, extent=(0, 120, 0, 120), interpolation='hermite', cmap=cmap)
     mappable.changed()
     plt.show()
