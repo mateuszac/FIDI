@@ -135,7 +135,7 @@ class Shield(Prism):
 
     def compute(self):
         self._computed = True
-        fdm_shield.compute_shield(self._displacements, self._Ds, self._loads_shield,
+        fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
                            self._supports, self._density, self._material["v"])
 
 
@@ -171,7 +171,7 @@ class Shell(Shield, Plate):
         self._computed = True
         fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
                           self._supports, self._density, self._material["v"])
-        fdm_shield.compute_shield(self._displacements, self._Ds, self._loads_shield,
+        fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
                            self._supports, self._density, self._material["v"])
 
 
