@@ -97,15 +97,15 @@ def compute_shield(displacements, E, loads, supports, density, v):
     beta3 = (-G * Ds / (v * Ds + G))
 
     p[0, 0] = 0
-    A[0, 0] = 1 # after A*f=P it gives result 1*f(top-left) = 0
+    A[0, 0] = 1  # after A*f=P it gives result 1*f(top-left) = 0
     p[i - 1, 0] = 0
-    A[i - 1, i - 1] = 1 # after A*f=P it gives result 1*f(top-right) = 0
+    A[i - 1, i - 1] = 1  # after A*f=P it gives result 1*f(top-right) = 0
     p[(j - 1) * i, 0] = 0
-    A[(j - 1) * i, (j - 1) * i] = 1 # after A*f=P it gives result 1*f(bottom-left) = 0
+    A[(j - 1) * i, (j - 1) * i] = 1  # after A*f=P it gives result 1*f(bottom-left) = 0
     p[(j - 1) * i + i - 1, 0] = 0
-    A[(j - 1) * i + i - 1, (j - 1) * i + i - 1] = 1 # after A*f=P it gives result 1*f(bottom-right) = 0
+    A[(j - 1) * i + i - 1, (j - 1) * i + i - 1] = 1  # after A*f=P it gives result 1*f(bottom-right) = 0
 
-    ### first for vertical direction of load ###
+    # first for vertical direction of load #
 
     a1 = alpha1v
     a2 = alpha2v
@@ -116,32 +116,105 @@ def compute_shield(displacements, E, loads, supports, density, v):
 
     """ 4. Setting equations for corner points (A) for displacement boundary conditions """
 
-        if supports["top"] in [1, 2] or supports["left"] in [1, 2]: # 3 equations for corner point
+    if supports["top"] in [1, 2] or supports["left"] in [1, 2]:  # 3 equations for corner point
 
-            p[1, 0] = 0
-            A[1, 1] = 1
-            A[1, i] = -1 # after A*f=P it gives result f1-f2 = 0, so f1 = f2 for 2 fictitious nodes
+        p[1, 0] = 0
+        A[1, 1] = 1
+        A[1, i] = -1  # after A*f=P it gives result f1-f2 = 0, so f1 = f2 for 2 fictitious nodes
 
-            p[i, 0] = 0 * density**2 # support or forced displacement value in vertical direction
-            A[i, i] = a1
-            A[i, 1] = a3
-            A[i, i+1] = -2*a1 - a2 - 2*a3
-            A[i, i+2] = a1 + a2
-            A[i, 2*i+1] = a2 + a3
-            A[i, 2*i+2] = -a2
+        p[i, 0] = 0 * density ** 2  # support or forced displacement value in vertical direction
+        A[i, i] = a1
+        A[i, 1] = a3
+        A[i, i + 1] = -2 * a1 - a2 - 2 * a3
+        A[i, i + 2] = a1 + a2
+        A[i, 2 * i + 1] = a2 + a3
+        A[i, 2 * i + 2] = -a2
 
-            p[i, 0] = 0 * density ** 2  # support or forced displacement value in horizontal direction
-            A[i, i] = a4
-            A[i, 1] = a6
-            A[i, i + 1] = -2 * a4 - a5 - 2 * a6
-            A[i, i + 2] = a4 + a5
-            A[i, 2 * i + 1] = a5 + a6
-            A[i, 2 * i + 2] = -a5
+        p[i + 1, 0] = 0 * density ** 2  # support or forced displacement value in horizontal direction
+        A[i + 1, i] = a4
+        A[i + 1, 1] = a6
+        A[i + 1, i + 1] = -2 * a4 - a5 - 2 * a6
+        A[i + 1, i + 2] = a4 + a5
+        A[i + 1, 2 * i + 1] = a5 + a6
+        A[i + 1, 2 * i + 2] = -a5
 
-        else:
-            pass # it mean that for this node static boundaries will be applied
+    else:
+        pass  # it mean that for this node static boundaries will be applied
 
+    if supports["top"] in [1, 2] or supports["right"] in [1, 2]:  # 3 equations for corner point
 
+        p[i - 2, 0] = 0
+        A[i - 2, i - 2] = 1
+        A[i - 2, 2 * i - 1] = -1  # after A*f=P it gives result f1-f2 = 0, so f1 = f2 for 2 fictitious nodes
+
+        p[2 * i - 2, 0] = 0 * density ** 2  # support or forced displacement value in vertical direction
+        A[2 * i - 2, i - 2] = a3
+        A[2 * i - 2, 2 * i - 3] = a1 - a2
+        A[2 * i - 2, 2 * i - 2] = -2 * a1 + a2 - 2 * a3
+        A[2 * i - 2, 2 * i - 1] = a1
+        A[2 * i - 2, 3 * i - 3] = a2
+        A[2 * i - 2, 3 * i - 2] = -a2 + a3
+
+        p[2 * i - 1, 0] = 0 * density ** 2  # support or forced displacement value in horizontal direction
+        A[2 * i - 1, i - 2] = a6
+        A[2 * i - 1, 2 * i - 3] = a4 - a5
+        A[2 * i - 1, 2 * i - 2] = -2 * a4 + a5 - 2 * a6
+        A[2 * i - 1, 2 * i - 1] = a4
+        A[2 * i - 1, 3 * i - 3] = a5
+        A[2 * i - 1, 3 * i - 2] = -a5 + a6
+
+    else:
+        pass  # it mean that for this node static boundaries will be applied
+
+    if supports["bottom"] in [1, 2] or supports["left"] in [1, 2]:  # 3 equations for corner point
+
+        p[(j - 2) * i, 0] = 0
+        A[(j - 2) * i, (j - 2) * i] = 1
+        A[(j - 2) * i, (j - 1) * i + 1] = -1  # after A*f=P it gives result f1-f2 = 0, so f1 = f2 for 2 fictitious nodes
+
+        p[(j - 2) * i + 1, 0] = 0 * density ** 2  # support or forced displacement value in vertical direction
+        A[(j - 2) * i + 1, (j - 3) * i + 1] = -a2 + a3
+        A[(j - 2) * i + 1, (j - 3) * i + 2] = a2
+        A[(j - 2) * i + 1, (j - 2) * i] = a1
+        A[(j - 2) * i + 1, (j - 2) * i + 1] = -2 * a1 + a2 - 2 * a3
+        A[(j - 2) * i + 1, (j - 2) * i + 2] = a1 - a2
+        A[(j - 2) * i + 1, (j - 1) * i + 1] = a3
+
+        p[(j - 1) * i + 1, 0] = 0 * density ** 2  # support or forced displacement value in horizontal direction
+        A[(j - 1) * i + 1, (j - 3) * i + 1] = -a5 + a6
+        A[(j - 1) * i + 1, (j - 3) * i + 2] = a5
+        A[(j - 1) * i + 1, (j - 2) * i] = a4
+        A[(j - 1) * i + 1, (j - 2) * i + 1] = -2 * a4 + a5 - 2 * a6
+        A[(j - 1) * i + 1, (j - 2) * i + 2] = a4 - a5
+        A[(j - 1) * i + 1, (j - 1) * i + 1] = a6
+
+    else:
+        pass  # it mean that for this node static boundaries will be applied
+
+    if supports["bottom"] in [1, 2] or supports["right"] in [1, 2]:  # 3 equations for corner point
+
+        p[(j - 2) * i + i - 1, 0] = 0
+        A[(j - 2) * i + i - 1, (j - 2) * i + i - 1] = 1
+        A[(j - 2) * i + i - 1, (j - 1) * i + i - 2] = -1
+
+        p[(j - 2) * i + i - 2, 0] = 0 * density ** 2
+        A[(j - 2) * i + i - 2, (j - 3) * i + i - 3] = -a2
+        A[(j - 2) * i + i - 2, (j - 3) * i + i - 2] = a2 + a3
+        A[(j - 2) * i + i - 2, (j - 2) * i + i - 3] = a1 + a2
+        A[(j - 2) * i + i - 2, (j - 2) * i + i - 2] = -2 * a1 - a2 - 2 * a3
+        A[(j - 2) * i + i - 2, (j - 2) * i + i - 1] = a1
+        A[(j - 2) * i + i - 2, (j - 1) * i + i - 2] = a3
+
+        p[(j - 1) * i + i - 2, 0] = 0 * density ** 2
+        A[(j - 1) * i + i - 2, (j - 3) * i + i - 3] = -a5
+        A[(j - 1) * i + i - 2, (j - 3) * i + i - 2] = a5 + a6
+        A[(j - 1) * i + i - 2, (j - 2) * i + i - 3] = a4 + a5
+        A[(j - 1) * i + i - 2, (j - 2) * i + i - 2] = -2 * a4 - a5 - 2 * a6
+        A[(j - 1) * i + i - 2, (j - 2) * i + i - 1] = a4
+        A[(j - 1) * i + i - 2, (j - 1) * i + i - 2] = a6
+
+    else:
+        pass  # it mean that for this node static boundaries will be applied
 
     """ 5. Setting equations for corner points (A) for statical boundary conditions """
 
