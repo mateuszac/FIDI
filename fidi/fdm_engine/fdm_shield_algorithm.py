@@ -20,14 +20,14 @@ def compute_shield(displacements, E, loads, supports, density, v):
     j += 2     # adding fictitious nodes
     n = i * j  # amount of nodes
 
-    xB = loads["x_direction"]["bottom"]
-    xT = loads["x_direction"]["top"]
-    xL = loads["x_direction"]["left"]
-    xR = loads["x_direction"]["right"]
-    yB = loads["y_direction"]["bottom"]
-    yT = loads["y_direction"]["top"]
-    yL = loads["y_direction"]["left"]
-    yR = loads["y_direction"]["right"]
+    load_xB = loads["x_direction"]["bottom"]
+    load_xT = loads["x_direction"]["top"]
+    load_xL = loads["x_direction"]["left"]
+    load_xR = loads["x_direction"]["right"]
+    load_yB = loads["y_direction"]["bottom"]
+    load_yT = loads["y_direction"]["top"]
+    load_yL = loads["y_direction"]["left"]
+    load_yR = loads["y_direction"]["right"]
 
     G = E/(2*(1+v))
     Ds = E/(1-v**2)
@@ -113,6 +113,27 @@ def compute_shield(displacements, E, loads, supports, density, v):
     a4 = alpha4v
     a5 = alpha5v
     a6 = alpha6v
+
+    # C coefficients for sigma_x boundary conditions
+
+    cx1 = Ds * a1
+    cx2 = Ds * a2 + v * Ds * a4
+    cx3 = Ds * a3 + v * Ds * a5
+    cx4 = Ds * a6
+
+    # C coefficients for sigma_y boundary conditions
+
+    cy1 = v * Ds * a1
+    cy2 = v * Ds * a2 + Ds * a4
+    cy3 = v * Ds * a3 + Ds * a5
+    cy4 = v * Ds * a6
+
+    # C coefficients for tau_xy boundary conditions
+
+    ct1 = G * a4
+    ct2 = G * a1 + G * a5
+    ct3 = G * a2 + G * a6
+    ct4 = G * a3
 
     """ 4. Setting equations for corner points (A) for displacement boundary conditions """
 
@@ -217,6 +238,138 @@ def compute_shield(displacements, E, loads, supports, density, v):
         pass  # it mean that for this node static boundaries will be applied
 
     """ 5. Setting equations for corner points (A) for statical boundary conditions """
+
+    if supports["top"] == 0 and supports["left"] == 0:  # 3 equations for corner point
+
+        p[1, 0] = 0
+        A[1, 1] = 1
+        A[1, i] = -1  # after A*f=P it gives result f1-f2 = 0, so f1 = f2 for 2 fictitious nodes
+
+        p[i, 0] = -(0.5*load_xL + 0.5*load_xT) * density ** 3  # sig_x = 0.5*sig_x_load + 0.5*tau_xy_load # x with -
+        A[i, i] = -cx1 + cx2
+        A[i, 1] = -cx3 + cx4
+        A[i, 2] = cx3
+        A[i, i + 1] = 3 * cx1 - 2 * cx2 + 2 * cx3 - 3 * cx4
+        A[i, i + 2] = -3 * cx1 + cx2 - 2 * cx3
+        A[i, i + 3] = cx1
+        A[i, 2 * i] = -cx2
+        A[i, 2 * i + 1] = 2 * cx2 - cx3 + 3 * cx4
+        A[i, 2 * i + 2] = -cx2 + cx3
+        A[i, 3 * i + 1] = -cx4
+
+        p[i + 1, 0] = (0.5*load_yL + 0.5*load_yT) * density ** 3  # sig_y = 0.5*sig_y_load + 0.5*tau_xy_load # y with +
+        A[i + 1, i] = -cy1 + cy2
+        A[i + 1, 1] = -cy3 + cy4
+        A[i + 1, 2] = cy3
+        A[i + 1, i + 1] = 3 * cy1 - 2 * cy2 + 2 * cy3 - 3 * cy4
+        A[i + 1, i + 2] = -3 * cy1 + cy2 - 2 * cy3
+        A[i + 1, i + 3] = cy1
+        A[i + 1, 2 * i] = -cy2
+        A[i + 1, 2 * i + 1] = 2 * cy2 - cy3 + 3 * cy4
+        A[i + 1, 2 * i + 2] = -cy2 + cy3
+        A[i + 1, 3 * i + 1] = -cy4
+
+    else:
+        pass  # it mean that for this node displacement boundaries will be applied
+
+    if supports["top"] == 0 and supports["right"] == 0:  # 3 equations for corner point
+
+        p[i - 2, 0] = 0
+        A[i - 2, i - 2] = 1
+        A[i - 2, 2 * i - 1] = -1  # after A*f=P it gives result f1-f2 = 0, so f1 = f2 for 2 fictitious nodes
+
+        p[2 * i - 2, 0] = (0.5 * load_xT + 0.5 * load_xR) * density ** 3  # sig_x = 0.5*sig_x_load + 0.5*tau_xy_load
+        A[2 * i - 2, i - 3] = -cx3
+        A[2 * i - 2, i - 2] = cx3 + cx4
+        A[2 * i - 2, 2 * i - 4] = -cx1
+        A[2 * i - 2, 2 * i - 3] = 3 * cx1 + cx2 + 2 * cx3
+        A[2 * i - 2, 2 * i - 2] = -3 * cx1 - 2 * cx2 - 2 * cx3 - 3 * cx4
+        A[2 * i - 2, 2 * i - 1] = cx1 + cx2
+        A[2 * i - 2, 3 * i - 3] = -cx2 - cx3
+        A[2 * i - 2, 3 * i - 2] = 2 * cx2 + cx3 + 3 * cx4
+        A[2 * i - 2, 3 * i - 1] = -cx2
+        A[2 * i - 2, 4 * i - 2] = -cx4
+
+        p[2 * i - 1, 0] = (0.5 * load_yT + 0.5 * load_yR) * density ** 3  # sig_y = 0.5*sig_y_load + 0.5*tau_xy_load
+        A[2 * i - 1, i - 3] = -cy3
+        A[2 * i - 1, i - 2] = cy3 + cy4
+        A[2 * i - 1, 2 * i - 4] = -cy1
+        A[2 * i - 1, 2 * i - 3] = 3 * cy1 + cy2 + 2 * cy3
+        A[2 * i - 1, 2 * i - 2] = -3 * cy1 - 2 * cy2 - 2 * cy3 - 3 * cy4
+        A[2 * i - 1, 2 * i - 1] = cy1 + cy2
+        A[2 * i - 1, 3 * i - 3] = -cy2 - cy3
+        A[2 * i - 1, 3 * i - 2] = 2 * cy2 + cy3 + 3 * cy4
+        A[2 * i - 1, 3 * i - 1] = -cy2
+        A[2 * i - 1, 4 * i - 2] = -cy4
+
+    else:
+        pass  # it mean that for this node displacement boundaries will be applied
+
+    if supports["bottom"] == 0 and supports["left"] == 0:  # 3 equations for corner point
+
+        p[(j - 2) * i, 0] = 0
+        A[(j - 2) * i, (j - 2) * i] = 1
+        A[(j - 2) * i, (j - 1) * i + 1] = -1
+
+        p[(j - 2) * i + 1, 0] = -(0.5 * load_xL + 0.5 * load_xB) * density ** 3
+        A[(j - 2) * i + 1, (j - 4) * i + 1] = cx4
+        A[(j - 2) * i + 1, (j - 3) * i] = cx2
+        A[(j - 2) * i + 1, (j - 3) * i + 1] = -2 * cx2 - cx3 - 3 * cx4
+        A[(j - 2) * i + 1, (j - 3) * i + 2] = cx2 + cx3
+        A[(j - 2) * i + 1, (j - 2) * i] = -cx1 - cx2
+        A[(j - 2) * i + 1, (j - 2) * i + 1] = 3 * cx1 + 2 * cx2 + 2 * cx3 + 3 * cx4
+        A[(j - 2) * i + 1, (j - 2) * i + 2] = -3 * cx1 - cx2 - 2 * cx3
+        A[(j - 2) * i + 1, (j - 2) * i + 3] = cx1
+        A[(j - 2) * i + 1, (j - 1) * i + 1] = -cx3 - cx4
+        A[(j - 2) * i + 1, (j - 1) * i + 2] = cx3
+
+        p[(j - 1) * i + 1, 0] = -(0.5 * load_yL + 0.5 * load_yB) * density ** 3
+        A[(j - 1) * i + 1, (j - 4) * i + 1] = cy4
+        A[(j - 1) * i + 1, (j - 3) * i] = cy2
+        A[(j - 1) * i + 1, (j - 3) * i + 1] = -2 * cy2 - cy3 - 3 * cy4
+        A[(j - 1) * i + 1, (j - 3) * i + 2] = cy2 + cy3
+        A[(j - 1) * i + 1, (j - 2) * i] = -cy1 - cy2
+        A[(j - 1) * i + 1, (j - 2) * i + 1] = 3 * cy1 + 2 * cy2 + 2 * cy3 + 3 * cy4
+        A[(j - 1) * i + 1, (j - 2) * i + 2] = -3 * cy1 - cy2 - 2 * cy3
+        A[(j - 1) * i + 1, (j - 2) * i + 3] = cy1
+        A[(j - 1) * i + 1, (j - 1) * i + 1] = -cy3 - cy4
+        A[(j - 1) * i + 1, (j - 1) * i + 2] = cy3
+
+    else:
+        pass  # it mean that for this node displacement boundaries will be applied
+
+    if supports["bottom"] == 0 and supports["right"] == 0:  # 3 equations for corner point
+
+        p[(j - 2) * i + i - 1, 0] = 0
+        A[(j - 2) * i + i - 1, (j - 2) * i + i - 1] = 1
+        A[(j - 2) * i + i - 1, (j - 1) * i + i - 2] = -1
+
+        p[(j - 2) * i + i - 2, 0] = (0.5 * load_xB + 0.5 * load_xR) * density ** 3
+        A[(j - 2) * i + i - 2, (j - 4) * i + i - 2] = cx4
+        A[(j - 2) * i + i - 2, (j - 3) * i + i - 3] = cx2 - cx3
+        A[(j - 2) * i + i - 2, (j - 3) * i + i - 2] = -2 * cx2 + cx3 - 3 * cx4
+        A[(j - 2) * i + i - 2, (j - 3) * i + i - 1] = cx2
+        A[(j - 2) * i + i - 2, (j - 2) * i + i - 4] = -cx1
+        A[(j - 2) * i + i - 2, (j - 2) * i + i - 3] = 3 * cx1 - cx2 + 2 * cx3
+        A[(j - 2) * i + i - 2, (j - 2) * i + i - 2] = -3 * cx1 + 2 * cx2 - 2 * cx3 + 3 * cx4
+        A[(j - 2) * i + i - 2, (j - 2) * i + i - 1] = cx1 - cx2
+        A[(j - 2) * i + i - 2, (j - 1) * i + i - 3] = -cx3
+        A[(j - 2) * i + i - 2, (j - 1) * i + i - 2] = cx3 - cx4
+
+        p[(j - 1) * i + i - 2, 0] = -(0.5 * load_yB + 0.5 * load_yR) * density ** 3
+        A[(j - 1) * i + i - 2, (j - 4) * i + i - 2] = cy4
+        A[(j - 1) * i + i - 2, (j - 3) * i + i - 3] = cy2 - cy3
+        A[(j - 1) * i + i - 2, (j - 3) * i + i - 2] = -2 * cy2 + cy3 - 3 * cy4
+        A[(j - 1) * i + i - 2, (j - 3) * i + i - 1] = cy2
+        A[(j - 1) * i + i - 2, (j - 2) * i + i - 4] = -cy1
+        A[(j - 1) * i + i - 2, (j - 2) * i + i - 3] = 3 * cy1 - cy2 + 2 * cy3
+        A[(j - 1) * i + i - 2, (j - 2) * i + i - 2] = -3 * cy1 + 2 * cy2 - 2 * cy3 + 3 * cy4
+        A[(j - 1) * i + i - 2, (j - 2) * i + i - 1] = cy1 - cy2
+        A[(j - 1) * i + i - 2, (j - 1) * i + i - 3] = -cy3
+        A[(j - 1) * i + i - 2, (j - 1) * i + i - 2] = cy3 - cy4
+
+    else:
+        pass  # it mean that for this node displacement boundaries will be applied
 
     """ 6. Setting equations for edge points (B) for displacement boundary conditions """
 
