@@ -373,6 +373,63 @@ def compute_shield(displacements, E, loads, supports, density, v):
 
     """ 6. Setting equations for edge points (B) for displacement boundary conditions """
 
+    def edge_nodes_displacement(real_node, fictitious_node,  n1, n2, n3, n4, n5, n6, n7, n8, n9,
+                                _A=A, _p=p, _i=i, _j=j, _v=v, _density=density,
+                                _a1=a1, _a2=a2, _a3=a3, _a4=a4, _a5=a5, _a6=a6):
+        # 2 equations for edge points
+
+        _p[real_node, 0] = 0 * _density**2  # equation for u(i,j)
+        _A[real_node, n1] = -_a2/4
+        _A[real_node, n2] = _a3
+        _A[real_node, n3] = _a2/4
+        _A[real_node, n4] = _a1
+        _A[real_node, n5] = -2*_a1 - 2*_a3
+        _A[real_node, n6] = _a1
+        _A[real_node, n7] = _a2/4
+        _A[real_node, n8] = _a3
+        _A[real_node, n9] = -_a2/4
+
+        _p[fictitious_node, 0] = 0 * _density ** 2  # equation for v(i,j)
+        _A[fictitious_node, n1] = -_a5 / 4
+        _A[fictitious_node, n2] = _a6
+        _A[fictitious_node, n3] = _a5 / 4
+        _A[fictitious_node, n4] = _a4
+        _A[fictitious_node, n5] = -2 * _a4 - 2 * _a6
+        _A[fictitious_node, n6] = _a4
+        _A[fictitious_node, n7] = _a5 / 4
+        _A[fictitious_node, n8] = _a6
+        _A[fictitious_node, n9] = -_a5 / 4
+
+        return [_A, _p]
+
+    if supports["top"] in [1, 2]:
+        for m in range(2, i - 2, 1):    # top
+            [A, p] = edge_nodes_displacement(i + m, m, m - 1, m, m + 1, i + m - 1, i + m,
+                                             i + m + 1, 2 * i + m - 1, 2 * i + m, 2 * i + m + 1)
+    else:
+        pass     # it mean that for this node static boundaries will be applied
+
+    if supports["left"] in [1, 2]:
+        for m in range(2 * i, (j - 2) * i, i):  # left
+            [A, p] = edge_nodes_displacement(m + 1, m, -i + m, -i + m + 1, -i + m + 2, m,
+                                             m + 1, m + 2, i + m, i + m + 1, i + m + 2)
+    else:
+        pass     # it mean that for this node static boundaries will be applied
+
+    if supports["bottom"] in [1, 2]:
+        for m in range((j - 1) * i + 2, (j - 1) * i + i - 2, 1):  # bottom
+            [A, p] = edge_nodes_displacement(-i + m, m, -2*i + m - 1, -2*i + m, -2 * i + m + 1,
+                                             i + m - 1, i + m, i + m + 1, m - 1, m, m + 1)
+    else:
+        pass     # it mean that for this node static boundaries will be applied
+
+    if supports["right"] in [1, 2]:
+        for m in range(2 * i + i - 1, (j - 2) * i + i - 1, i):  # right
+            [A, p] = edge_nodes_displacement(m, m - 1, i + m - 2, i + m - 1, i + m, m - 2,
+                                             m - 1, m, -i + m - 2, -i + m - 1, -i + m)
+    else:
+        pass     # it mean that for this node static boundaries will be applied
+
     """ 7. Setting equations for edge points (B) for statical boundary conditions """
 
     """ 8. Setting equations for mid points (C) """
