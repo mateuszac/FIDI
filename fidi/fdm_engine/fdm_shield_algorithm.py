@@ -373,32 +373,32 @@ def compute_shield(displacements, E, loads, supports, density, v):
 
     """ 6. Setting equations for edge points (B) for displacement boundary conditions """
 
-    def edge_nodes_displacement(real_node, fictitious_node,  n1, n2, n3, n4, n5, n6, n7, n8, n9,
+    def edge_nodes_displacement(_real_node, _fictitious_node,  n1, n2, n3, n4, n5, n6, n7, n8, n9,
                                 _A=A, _p=p, _i=i, _j=j, _v=v, _density=density,
                                 _a1=a1, _a2=a2, _a3=a3, _a4=a4, _a5=a5, _a6=a6):
         # 2 equations for edge points
 
-        _p[real_node, 0] = 0 * _density**2  # equation for u(i,j)
-        _A[real_node, n1] = -_a2/4
-        _A[real_node, n2] = _a3
-        _A[real_node, n3] = _a2/4
-        _A[real_node, n4] = _a1
-        _A[real_node, n5] = -2*_a1 - 2*_a3
-        _A[real_node, n6] = _a1
-        _A[real_node, n7] = _a2/4
-        _A[real_node, n8] = _a3
-        _A[real_node, n9] = -_a2/4
+        _p[_real_node, 0] = 0 * _density**2  # equation for u(i,j)
+        _A[_real_node, n1] = -_a2/4
+        _A[_real_node, n2] = _a3
+        _A[_real_node, n3] = _a2/4
+        _A[_real_node, n4] = _a1
+        _A[_real_node, n5] = -2*_a1 - 2*_a3
+        _A[_real_node, n6] = _a1
+        _A[_real_node, n7] = _a2/4
+        _A[_real_node, n8] = _a3
+        _A[_real_node, n9] = -_a2/4
 
-        _p[fictitious_node, 0] = 0 * _density ** 2  # equation for v(i,j)
-        _A[fictitious_node, n1] = -_a5 / 4
-        _A[fictitious_node, n2] = _a6
-        _A[fictitious_node, n3] = _a5 / 4
-        _A[fictitious_node, n4] = _a4
-        _A[fictitious_node, n5] = -2 * _a4 - 2 * _a6
-        _A[fictitious_node, n6] = _a4
-        _A[fictitious_node, n7] = _a5 / 4
-        _A[fictitious_node, n8] = _a6
-        _A[fictitious_node, n9] = -_a5 / 4
+        _p[_fictitious_node, 0] = 0 * _density ** 2  # equation for v(i,j)
+        _A[_fictitious_node, n1] = -_a5 / 4
+        _A[_fictitious_node, n2] = _a6
+        _A[_fictitious_node, n3] = _a5 / 4
+        _A[_fictitious_node, n4] = _a4
+        _A[_fictitious_node, n5] = -2 * _a4 - 2 * _a6
+        _A[_fictitious_node, n6] = _a4
+        _A[_fictitious_node, n7] = _a5 / 4
+        _A[_fictitious_node, n8] = _a6
+        _A[_fictitious_node, n9] = -_a5 / 4
 
         return [_A, _p]
 
@@ -431,6 +431,148 @@ def compute_shield(displacements, E, loads, supports, density, v):
         pass     # it mean that for this node static boundaries will be applied
 
     """ 7. Setting equations for edge points (B) for statical boundary conditions """
+
+        # 2 equations for edge points
+
+    if supports["top"] == 0:
+        for m in range(2, i - 2, 1):    # top
+            real_node = i + m
+            fictitious_node = m
+
+            p[real_node, 0] = load_xT * 2 * density ** 3  # equation for u(i,j)
+            A[real_node, m - 1] = ct2 - ct3
+            A[real_node, m] = -2 * ct2 + 2 * ct4
+            A[real_node, m + 1] = ct2 + ct3
+            A[real_node, m + i - 1] = 2 * ct1 + 2 * ct3
+            A[real_node, m + i] = -6 * ct4
+            A[real_node, m + i + 1] = -2 * ct1 - 2 * ct3
+            A[real_node, m + 2 * i - 1] = -ct2 - ct3
+            A[real_node, m + 2 * i] = 2 * ct2 + 6 * ct4
+            A[real_node, m + 2 * i + 1] = -ct2 + ct3
+            A[real_node, m + i - 2] = -ct1
+            A[real_node, m + i + 2] = ct1
+            A[real_node, m + 3 * i] = -2 * ct4
+
+            p[fictitious_node, 0] = load_yT * 2 * density ** 3  # equation for v(i,j)
+            A[fictitious_node, m - 1] = cy2 - cy3
+            A[fictitious_node, m] = -2 * cy2 + 2 * cy4
+            A[fictitious_node, m + 1] = cy2 + cy3
+            A[fictitious_node, m + i - 1] = 2 * cy1 + 2 * cy3
+            A[fictitious_node, m + i] = -6 * cy4
+            A[fictitious_node, m + i + 1] = -2 * cy1 - 2 * cy3
+            A[fictitious_node, m + 2 * i - 1] = -cy2 - cy3
+            A[fictitious_node, m + 2 * i] = 2 * cy2 + 6 * cy4
+            A[fictitious_node, m + 2 * i + 1] = -cy2 + cy3
+            A[fictitious_node, m + i - 2] = -cy1
+            A[fictitious_node, m + i + 2] = cy1
+            A[fictitious_node, m + 3 * i] = -2 * cy4
+    else:
+        pass     # it mean that for this node displacement boundaries will be applied
+
+    if supports["left"] == 0:
+        for m in range(2 * i, (j - 2) * i, i):  # left
+            real_node = m + 1
+            fictitious_node = m
+
+            p[real_node, 0] = load_xL * 2 * density ** 3  # equation for u(i,j)
+            A[real_node, m - i] = cx2 - cx3
+            A[real_node, m - i + 1] = -2 * cx2 - 2 * cx4
+            A[real_node, m - i + 2] = cx2 + cx3
+            A[real_node, m] = -2 * cx1 + 2 * cx3
+            A[real_node, m + 1] = 6 * cx4
+            A[real_node, m + 2] = -6 * cx1 - 2 * cx3
+            A[real_node, m + i] = -cx2 - cx3
+            A[real_node, m + i + 1] = 2 * cx2 + 2 * cx4
+            A[real_node, m + i + 2] = -cx2 + cx3
+            A[real_node, m - 2 * i + 1] = cx4
+            A[real_node, m + 2 * i + 1] = -cx4
+            A[real_node, m + 3] = 2 * cx1
+
+            p[fictitious_node, 0] = load_yL * 2 * density ** 3  # equation for v(i,j)
+            A[fictitious_node, m - i] = ct2 - ct3
+            A[fictitious_node, m - i + 1] = -2 * ct2 - 2 * ct4
+            A[fictitious_node, m - i + 2] = ct2 + ct3
+            A[fictitious_node, m] = -2 * ct1 + 2 * ct3
+            A[fictitious_node, m + 1] = 6 * ct4
+            A[fictitious_node, m + 2] = -6 * ct1 - 2 * ct3
+            A[fictitious_node, m + i] = -ct2 - ct3
+            A[fictitious_node, m + i + 1] = 2 * ct2 + 2 * ct4
+            A[fictitious_node, m + i + 2] = -ct2 + ct3
+            A[fictitious_node, m - 2 * i + 1] = ct4
+            A[fictitious_node, m + 2 * i + 1] = -ct4
+            A[fictitious_node, m + 3] = 2 * ct1
+    else:
+        pass     # it mean that for this node displacement boundaries will be applied
+
+    if supports["bottom"] == 0:
+        for m in range((j - 1) * i + 2, (j - 1) * i + i - 2, 1):  # bottom
+            real_node = -i + m
+            fictitious_node = m
+
+            p[real_node, 0] = load_xB * 2 * density ** 3  # equation for u(i,j)
+            A[real_node, m - 2 * i - 1] = ct2 - ct3
+            A[real_node, m - 2 * i] = -2 * ct2 - 6 * ct4
+            A[real_node, m - 2 * i + 1] = ct2 + ct3
+            A[real_node, m - i - 1] = 2 * ct1 + 2 * ct3
+            A[real_node, m - i] = 6 * ct4
+            A[real_node, m - i + 1] = -2 * ct1 - 2 * ct3
+            A[real_node, m - 1] = -ct2 - ct3
+            A[real_node, m] = 2 * ct2 - 2 * ct4
+            A[real_node, m + 1] = -ct2 + ct3
+            A[real_node, m - i - 2] = -ct1
+            A[real_node, m - i + 2] = ct1
+            A[real_node, m - 3 * i] = 2 * ct4
+
+            p[fictitious_node, 0] = load_yB * 2 * density ** 3  # equation for v(i,j)
+            A[fictitious_node, m - 2 * i - 1] = cy2 - cy3
+            A[fictitious_node, m - 2 * i] = -2 * cy2 - 6 * cy4
+            A[fictitious_node, m - 2 * i + 1] = cy2 + cy3
+            A[fictitious_node, m - i - 1] = 2 * cy1 + 2 * cy3
+            A[fictitious_node, m - i] = 6 * cy4
+            A[fictitious_node, m - i + 1] = -2 * cy1 - 2 * cy3
+            A[fictitious_node, m - 1] = -cy2 - cy3
+            A[fictitious_node, m] = 2 * cy2 - 2 * cy4
+            A[fictitious_node, m + 1] = -cy2 + cy3
+            A[fictitious_node, m - i - 2] = -cy1
+            A[fictitious_node, m - i + 2] = cy1
+            A[fictitious_node, m - 3 * i] = 2 * cy4
+    else:
+        pass     # it mean that for this node displacement boundaries will be applied
+
+    if supports["right"] == 0:
+        for m in range(2 * i + i - 1, (j - 2) * i + i - 1, i):  # right
+            real_node = m - 1
+            fictitious_node = m
+
+            p[real_node, 0] = load_xR * 2 * density ** 3  # equation for u(i,j)
+            A[real_node, m - i - 2] = cx2 - cx3
+            A[real_node, m - i - 1] = -2 * cx2 + -2 * cx4
+            A[real_node, m - i] = cx2 + cx3
+            A[real_node, m - 2] = 6 * cx1 + 2 * cx3
+            A[real_node, m - 1] = -6 * cx1
+            A[real_node, m] = 2 * cx1 - 2 * cx3
+            A[real_node, m + i - 2] = -cx2 - cx3
+            A[real_node, m + i - 1] = 2 * cx2 + 2 * cx4
+            A[real_node, m + i] = -cx2 + cx3
+            A[real_node, m - 2 * i - 1] = cx4
+            A[real_node, m + 2 * i - 1] = -cx4
+            A[real_node, m - 3] = -2 * cx1
+
+            p[fictitious_node, 0] = load_yR * 2 * density ** 3  # equation for v(i,j)
+            A[real_node, m - i - 2] = ct2 - ct3
+            A[real_node, m - i - 1] = -2 * ct2 + -2 * ct4
+            A[real_node, m - i] = ct2 + ct3
+            A[real_node, m - 2] = 6 * ct1 + 2 * ct3
+            A[real_node, m - 1] = -6 * ct1
+            A[real_node, m] = 2 * ct1 - 2 * ct3
+            A[real_node, m + i - 2] = -ct2 - ct3
+            A[real_node, m + i - 1] = 2 * ct2 + 2 * ct4
+            A[real_node, m + i] = -ct2 + ct3
+            A[real_node, m - 2 * i - 1] = ct4
+            A[real_node, m + 2 * i - 1] = -ct4
+            A[real_node, m - 3] = -2 * ct1
+    else:
+        pass     # it mean that for this node displacement boundaries will be applied
 
     """ 8. Setting equations for mid points (C) """
 
