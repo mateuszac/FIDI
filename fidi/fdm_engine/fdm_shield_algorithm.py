@@ -6,6 +6,7 @@ import datetime
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors
+import scipy.linalg as la
 
 
 def compute_shield(displacements, E, loads, supports, density, v):
@@ -418,8 +419,8 @@ def compute_shield(displacements, E, loads, supports, density, v):
 
     if supports["bottom"] in [1, 2]:
         for m in range((j - 1) * i + 2, (j - 1) * i + i - 2, 1):  # bottom
-            [A, p] = edge_nodes_displacement(-i + m, m, -2*i + m - 1, -2*i + m, -2 * i + m + 1,
-                                             i + m - 1, i + m, i + m + 1, m - 1, m, m + 1)
+            [A, p] = edge_nodes_displacement(-i + m, m, -2 * i + m - 1, -2*i + m, -2 * i + m + 1,
+                                             -i + m - 1, -i + m, -i + m + 1, m - 1, m, m + 1)
     else:
         pass     # it mean that for this node static boundaries will be applied
 
@@ -559,24 +560,59 @@ def compute_shield(displacements, E, loads, supports, density, v):
             A[real_node, m - 3] = -2 * cx1
 
             p[fictitious_node, 0] = load_yR * 2 * density ** 3  # equation for v(i,j)
-            A[real_node, m - i - 2] = ct2 - ct3
-            A[real_node, m - i - 1] = -2 * ct2 + -2 * ct4
-            A[real_node, m - i] = ct2 + ct3
-            A[real_node, m - 2] = 6 * ct1 + 2 * ct3
-            A[real_node, m - 1] = -6 * ct1
-            A[real_node, m] = 2 * ct1 - 2 * ct3
-            A[real_node, m + i - 2] = -ct2 - ct3
-            A[real_node, m + i - 1] = 2 * ct2 + 2 * ct4
-            A[real_node, m + i] = -ct2 + ct3
-            A[real_node, m - 2 * i - 1] = ct4
-            A[real_node, m + 2 * i - 1] = -ct4
-            A[real_node, m - 3] = -2 * ct1
+            A[fictitious_node, m - i - 2] = ct2 - ct3
+            A[fictitious_node, m - i - 1] = -2 * ct2 + -2 * ct4
+            A[fictitious_node, m - i] = ct2 + ct3
+            A[fictitious_node, m - 2] = 6 * ct1 + 2 * ct3
+            A[fictitious_node, m - 1] = -6 * ct1
+            A[fictitious_node, m] = 2 * ct1 - 2 * ct3
+            A[fictitious_node, m + i - 2] = -ct2 - ct3
+            A[fictitious_node, m + i - 1] = 2 * ct2 + 2 * ct4
+            A[fictitious_node, m + i] = -ct2 + ct3
+            A[fictitious_node, m - 2 * i - 1] = ct4
+            A[fictitious_node, m + 2 * i - 1] = -ct4
+            A[fictitious_node, m - 3] = -2 * ct1
     else:
         pass     # it mean that for this node displacement boundaries will be applied
 
     """ 8. Setting equations for mid points (C) """
 
+    def mid_nodes(node, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13,
+                  _A=A, _p=p, _density=density,
+                  _beta0=beta0, _beta1=beta1, _beta2=beta2, _beta3=beta3):
+
+        _p[node, 0] = _beta0 * 0 * _density**4  # there is no external load applied to mid nodes
+        _A[node, n1] = _beta3
+        _A[node, n2] = _beta2
+        _A[node, n3] = -4 * _beta3 - 2 * _beta2
+        _A[node, n4] = _beta2
+        _A[node, n5] = _beta1
+        _A[node, n6] = -4 * _beta1 - 2 * _beta2
+        _A[node, n7] = 6 * _beta1 + 4 * _beta2 + 6 * _beta3
+        _A[node, n8] = -4 * _beta1 - 2 * _beta2
+        _A[node, n9] = _beta1
+        _A[node, n10] = _beta2
+        _A[node, n11] = -4 * _beta3 - 2 * _beta2
+        _A[node, n12] = _beta2
+        _A[node, n13] = _beta3
+        return [_A, _p]
+
+    for vm in range(2, j - 2, 1):
+        for m in range(2, i - 2, 1):
+            [A, p] = mid_nodes(vm * i + m, (vm - 2) * i + m, (vm - 1) * i + m - 1, (vm - 1) * i + m,
+                               (vm - 1) * i + m + 1, vm * i + m - 2, vm * i + m - 1, vm * i + m, vm * i + m + 1,
+                               vm * i + m + 2, (vm + 1) * i + m - 1, (vm + 1) * i + m, (vm + 1) * i + m + 1,
+                               (vm + 2) * i + m)
+
     """ 9. Calculation of Af = p equation """
+
+    f_solved = np.linalg.solve(A, p)
+    F = np.zeros((i, j))
+    s = 0
+    for vm in range(j):
+        for m in range(i):
+            F[m, vm] = round(f_solved[s, 0], 14)
+            s += 1
 
     """ 10. Calculation of u and v from F matrix"""
 
@@ -584,3 +620,53 @@ def compute_shield(displacements, E, loads, supports, density, v):
     #    for load in Y direction:
 
     """ 11. Overall displacement calculation from superposition of displacements from X and Y loaded cases"""
+
+    return F.T
+
+
+if __name__ == '__main__':
+
+    class TestMeshClass(object):
+        def __init__(self):
+            self.data = [np.zeros((20, 20)), np.zeros((20, 20)), None]
+
+
+    test_class = TestMeshClass()
+    test_mesh = test_class.data
+    test_modulus_of_elasticity = 0.2
+    test_load = {
+        "x_direction": {
+            "bottom": 0.0,
+            "left": 0.0,
+            "right": 0.0,
+            "top": 0.0
+        },
+        "y_direction": {
+            "bottom": 0.0,
+            "left": 0.0,
+            "right": 0.0,
+            "top": 10.0
+        }}
+    test_supports = {           # 0 - free end  1 - hinged  2 - fixed
+                    "bottom": 2,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                    }
+    test_density = 1
+    test_poisson_ratio = 0.3
+    start = datetime.datetime.now()
+    g = compute_shield(test_mesh, test_modulus_of_elasticity, test_load, test_supports, test_density, test_poisson_ratio)
+    duration = datetime.datetime.now() - start   # time of calculations
+    print(g)
+    print(duration)
+    fig, ax = plt.subplots(1, 2)
+    cmap = cm.get_cmap(name='jet', lut=40)
+    norm = matplotlib.colors.Normalize()
+    mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
+    mappable.set_array(g)
+    mappable.autoscale()
+    matplotlib.pyplot.colorbar(mappable, ax[1])
+    ax[0].imshow(g, extent=(0, 20, 0, 20), interpolation='hermite', cmap=cmap)
+    mappable.changed()
+    plt.show()

@@ -400,7 +400,7 @@ if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [None, None, np.zeros((120, 120))]
+            self.data = [None, None, np.zeros((40, 40))]
 
 
     test_class = TestMeshClass()
@@ -413,7 +413,7 @@ if __name__ == '__main__':
                     "right": 0,
                     "top": 1
                     }
-    test_density = 3
+    test_density = 1
     test_poisson_ratio = 0.3
     start = datetime.datetime.now()
     g = compute_plate(test_mesh, test_flexural_stiffness, test_load, test_supports, test_density, test_poisson_ratio)
@@ -427,6 +427,6 @@ if __name__ == '__main__':
     mappable.set_array(g)
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g, extent=(0, 120, 0, 120), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g, extent=(0, 40, 0, 40), interpolation='hermite', cmap=cmap)
     mappable.changed()
     plt.show()
