@@ -9,7 +9,7 @@ import matplotlib.colors
 import scipy.linalg as la
 
 
-def compute_shield(displacements, E, loads, supports, density, v):
+def compute_shield_one_direction(displacements, E, loads, supports, density, v, thickness, direction):
     """Apply boundary conditions for shield objects and compute values of displacement in every node of mesh"""
 
     """ 1. Data """
@@ -106,14 +106,30 @@ def compute_shield(displacements, E, loads, supports, density, v):
     p[(j - 1) * i + i - 1, 0] = 0
     A[(j - 1) * i + i - 1, (j - 1) * i + i - 1] = 1  # after A*f=P it gives result 1*f(bottom-right) = 0
 
-    # first for vertical direction of load #
+    #  for one direction of load
 
-    a1 = alpha1v
-    a2 = alpha2v
-    a3 = alpha3v
-    a4 = alpha4v
-    a5 = alpha5v
-    a6 = alpha6v
+    if direction == "vertical":
+        a1 = alpha1v
+        a2 = alpha2v
+        a3 = alpha3v
+        a4 = alpha4v
+        a5 = alpha5v
+        a6 = alpha6v
+        load_xB = 0
+        load_xT = 0
+        load_xL = 0
+        load_xR = 0
+    else:
+        a1 = alpha1h
+        a2 = alpha2h
+        a3 = alpha3h
+        a4 = alpha4h
+        a5 = alpha5h
+        a6 = alpha6h
+        load_yB = 0
+        load_yT = 0
+        load_yL = 0
+        load_yR = 0
 
     # C coefficients for sigma_x boundary conditions
 
@@ -614,26 +630,68 @@ def compute_shield(displacements, E, loads, supports, density, v):
             F[m, vm] = round(f_solved[s, 0], 14)
             s += 1
 
-    """ 10. Calculation of u and v from F matrix"""
+    """ 10. Calculation of u, v, sigma x, sigma y and tau xy and membrane forces from F matrix"""
 
-    #    for load in X direction:
-    #    for load in Y direction:
+    u = np.zeros((i-2, j-2))
+    for vm in range(j-2):
+        for m in range(i-2):
+            u[m, vm] = -a2 / 4 * F[m, vm] + a3 * F[m + 1, vm] + a2 / 4 * F[m + 2, vm] \
+                       + a1 * F[m, vm + 1] + (-2 * a1 - 2 * a3) * F[m + 1, vm + 1] + a1 * F[m + 2, vm + 1] \
+                       + a2 / 4 * F[m, vm + 2] + a3 * F[m + 1, vm + 2] - a2 / 4 * F[m + 2, vm + 2]
+    # values at corners has to be changed due to the fact that corner points does not belong to F function domain
+    u[0, 0] = (a1 * F[0, 1] + a3 * F[1, 0] + (-2 * a1 - a2 - 2 * a3) * F[1, 1] + (a1 + a2) * F[2, 1]
+               + (a2 + a3) * F[1, 2] - a2 * F[2, 2]) * 1 / (density ** 2)
+    u[i - 3, 0] = (a1 * F[i-1, 1] + a3 * F[i-2, 0] + (-2 * a1 + a2 - 2 * a3) * F[i-2, 1] + (a1 - a2) * F[i-3, 1]
+                   + (-a2 + a3) * F[i-2, 2] + a2 * F[i-3, 2]) * 1 / (density ** 2)
+    u[0, j - 3] = (a1 * F[0, j-2] + a3 * F[1, j-1] + (-2 * a1 + a2 - 2 * a3) * F[1, j-2] + (a1 - a2) * F[2, j-2]
+                   + (-a2 + a3) * F[1, j-3] + a2 * F[2, j-3]) * 1 / (density ** 2)
+    u[i - 3, j - 3] = (a1 * F[i-1, j-2] + a3 * F[i-2, j-1] + (-2 * a1 - a2 - 2 * a3) * F[i-2, j-2]
+                       + (a1 + a2) * F[i-3, j-2] + (a2 + a3) * F[i-2, j-3] - a2 * F[i-3, j-3]) * 1 / (density ** 2)
 
-    """ 11. Overall displacement calculation from superposition of displacements from X and Y loaded cases"""
+    v = np.zeros((i-2, j-2))  # to be done
 
-    return F.T
+    sigma_x = np.zeros((i - 2, j - 2))    # to be done
+
+    sigma_y = np.zeros((i - 2, j - 2))    # to be done
+
+    tau_xy = np.zeros((i - 2, j - 2))     # to be done
+
+    nxx = sigma_x * thickness
+    nyy = sigma_y * thickness
+    nxy = tau_xy * thickness
+
+    return [u.T, v.T, sigma_x.T, sigma_y.T, tau_xy.T, nxx.T, nyy.T, nxy.T]
+
+
+def compute_shield(displacements, E, loads, supports, density, v, thickness):
+    """Function combining matrices for vertical and horizontal load cases"""
+
+    given_displacements = displacements
+    given_E = E
+    given_loads = loads
+    given_supports = supports
+    given_density = density
+    given_v = v
+    given_thickness = thickness
+    vertical_matrices = compute_shield_one_direction(given_displacements, given_E, given_loads, given_supports,
+                                                     given_density, given_v, given_thickness, "vertical")
+    horizontal_matrices = compute_shield_one_direction(given_displacements, given_E, given_loads, given_supports,
+                                                       given_density, given_v, given_thickness, "horizontal")
+    resulting_matrices = vertical_matrices + horizontal_matrices
+    return resulting_matrices
 
 
 if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [np.zeros((20, 20)), np.zeros((20, 20)), None]
+            self.data = [np.zeros((25, 25)), np.zeros((25, 25)), None]
 
 
     test_class = TestMeshClass()
     test_mesh = test_class.data
     test_modulus_of_elasticity = 0.2
+    test_thickness = 0.15
     test_load = {
         "x_direction": {
             "bottom": 0.0,
@@ -642,31 +700,31 @@ if __name__ == '__main__':
             "top": 0.0
         },
         "y_direction": {
-            "bottom": 0.0,
+            "bottom": 10.0,
             "left": 0.0,
             "right": 0.0,
-            "top": 10.0
+            "top": 0.0
         }}
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 2,
-                    "left": 0,
+                    "bottom": 0,
+                    "left": 2,
                     "right": 0,
                     "top": 0
                     }
     test_density = 1
     test_poisson_ratio = 0.3
     start = datetime.datetime.now()
-    g = compute_shield(test_mesh, test_modulus_of_elasticity, test_load, test_supports, test_density, test_poisson_ratio)
+    g = compute_shield(test_mesh, test_modulus_of_elasticity, test_load, test_supports, test_density,
+                       test_poisson_ratio, test_thickness)
     duration = datetime.datetime.now() - start   # time of calculations
-    print(g)
     print(duration)
     fig, ax = plt.subplots(1, 2)
     cmap = cm.get_cmap(name='jet', lut=40)
     norm = matplotlib.colors.Normalize()
     mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
-    mappable.set_array(g)
+    mappable.set_array(g[0])
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g, extent=(0, 20, 0, 20), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g[0], extent=(0, 25, 0, 25), interpolation='hermite', cmap=cmap)
     mappable.changed()
     plt.show()
