@@ -677,7 +677,9 @@ def compute_shield(displacements, E, loads, supports, density, v, thickness):
                                                      given_density, given_v, given_thickness, "vertical")
     horizontal_matrices = compute_shield_one_direction(given_displacements, given_E, given_loads, given_supports,
                                                        given_density, given_v, given_thickness, "horizontal")
-    resulting_matrices = vertical_matrices + horizontal_matrices
+    resulting_matrices = [0, 0, 0, 0, 0, 0, 0, 0]
+    for el in range(len(resulting_matrices)):
+        resulting_matrices[el] = vertical_matrices[el] + horizontal_matrices[el]
     return resulting_matrices
 
 
@@ -696,11 +698,11 @@ if __name__ == '__main__':
         "x_direction": {
             "bottom": 0.0,
             "left": 0.0,
-            "right": 0.0,
+            "right": 100.0,
             "top": 0.0
         },
         "y_direction": {
-            "bottom": 10.0,
+            "bottom": 0.0,
             "left": 0.0,
             "right": 0.0,
             "top": 0.0
