@@ -6,7 +6,6 @@ import datetime
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors
-import scipy.linalg as la
 
 
 def compute_shield_one_direction(displacements, E, loads, supports, density, v, thickness, direction):
@@ -648,13 +647,54 @@ def compute_shield_one_direction(displacements, E, loads, supports, density, v, 
     u[i - 3, j - 3] = (a1 * F[i-1, j-2] + a3 * F[i-2, j-1] + (-2 * a1 - a2 - 2 * a3) * F[i-2, j-2]
                        + (a1 + a2) * F[i-3, j-2] + (a2 + a3) * F[i-2, j-3] - a2 * F[i-3, j-3]) * 1 / (density ** 2)
 
-    v = np.zeros((i-2, j-2))  # to be done
+    v = np.zeros((i-2, j-2))
+    for vm in range(j-2):
+        for m in range(i-2):
+            v[m, vm] = -a5 / 4 * F[m, vm] + a6 * F[m + 1, vm] + a5 / 4 * F[m + 2, vm] \
+                       + a4 * F[m, vm + 1] + (-2 * a4 - 2 * a6) * F[m + 1, vm + 1] + a4 * F[m + 2, vm + 1] \
+                       + a5 / 4 * F[m, vm + 2] + a6 * F[m + 1, vm + 2] - a5 / 4 * F[m + 2, vm + 2]
+    # values at corners has to be changed due to the fact that corner points does not belong to F function domain
+    v[0, 0] = (a4 * F[0, 1] + a6 * F[1, 0] + (-2 * a4 - a5 - 2 * a6) * F[1, 1] + (a4 + a5) * F[2, 1]
+               + (a5 + a6) * F[1, 2] - a5 * F[2, 2]) * 1 / (density ** 2)
+    v[i - 3, 0] = (a4 * F[i-1, 1] + a6 * F[i-2, 0] + (-2 * a4 + a5 - 2 * a6) * F[i-2, 1] + (a4 - a5) * F[i-3, 1]
+                   + (-a5 + a6) * F[i-2, 2] + a5 * F[i-3, 2]) * 1 / (density ** 2)
+    v[0, j - 3] = (a4 * F[0, j-2] + a6 * F[1, j-1] + (-2 * a4 + a5 - 2 * a6) * F[1, j-2] + (a4 - a5) * F[2, j-2]
+                   + (-a5 + a6) * F[1, j-3] + a5 * F[2, j-3]) * 1 / (density ** 2)
+    v[i - 3, j - 3] = (a4 * F[i-1, j-2] + a6 * F[i-2, j-1] + (-2 * a4 - a5 - 2 * a6) * F[i-2, j-2]
+                       + (a4 + a5) * F[i-3, j-2] + (a5 + a6) * F[i-2, j-3] - a5 * F[i-3, j-3]) * 1 / (density ** 2)
 
-    sigma_x = np.zeros((i - 2, j - 2))    # to be done
+    sigma_x = np.zeros((i - 2, j - 2))
+    for vm in range(j-3)[1:]:
+        for m in range(i-3)[1:]:
+            sigma_x[m, vm] = cx4 * F[m + 1, vm - 1] + (cx2 - cx3) * F[m, vm] + (-2 * cx2 - 2 * cx4) * F[m + 1, vm] \
+                             + (cx2 + cx3) * F[m + 2, vm] - cx1 * F[m - 1, vm + 1] + (2 * cx1 + 2 * cx3) * F[m, vm + 1]\
+                             + 0 * F[m + 1, vm + 1] + (-2 * cx1 - 2 * cx3) * F[m + 2, vm + 1] + cx1 * F[m + 3, vm + 1] \
+                             + (-cx2 - cx3) * F[m, vm + 2] + (2 * cx2 + 2 * cx4) * F[m + 1, vm + 2] \
+                             + (-cx2 + cx3) * F[m + 2, vm + 2] - cx4 * F[m + 1, vm + 3]
+    # values at corners and edges has to be changed
+    # TO BE CONTINUED
 
-    sigma_y = np.zeros((i - 2, j - 2))    # to be done
+    sigma_y = np.zeros((i - 2, j - 2))
+    for vm in range(j-3)[1:]:
+        for m in range(i-3)[1:]:
+            sigma_y[m, vm] = cy4 * F[m + 1, vm - 1] + (cy1 - cy3) * F[m, vm] + (-2 * cy2 - 2 * cy4) * F[m + 1, vm] \
+                             + (cy2 + cy3) * F[m + 2, vm] - cy1 * F[m - 1, vm + 1] + (2 * cy1 + 2 * cy3) * F[m, vm + 1]\
+                             + 0 * F[m + 1, vm + 1] + (-2 * cy1 - 2 * cy3) * F[m + 2, vm + 1] + cy1 * F[m + 3, vm + 1] \
+                             + (-cy2 - cy3) * F[m, vm + 2] + (2 * cy2 + 2 * cy4) * F[m + 1, vm + 2] \
+                             + (-cy2 + cy3) * F[m + 2, vm + 2] - cy4 * F[m + 1, vm + 3]
+    # values at corners and edges has to be changed
+    # TO BE CONTINUED
 
-    tau_xy = np.zeros((i - 2, j - 2))     # to be done
+    tau_xy = np.zeros((i - 2, j - 2))
+    for vm in range(j-3)[1:]:
+        for m in range(i-3)[1:]:
+            tau_xy[m, vm] = ct4 * F[m + 1, vm - 1] + (ct2 - ct3) * F[m, vm] + (-2 * ct2 - 2 * ct4) * F[m + 1, vm] \
+                             + (ct2 + ct3) * F[m + 2, vm] - ct1 * F[m - 1, vm + 1] + (2 * ct1 + 2 * ct3) * F[m, vm + 1]\
+                             + 0 * F[m + 1, vm + 1] + (-2 * ct1 - 2 * ct3) * F[m + 2, vm + 1] + ct1 * F[m + 3, vm + 1] \
+                             + (-ct2 - ct3) * F[m, vm + 2] + (2 * ct2 + 2 * ct4) * F[m + 1, vm + 2] \
+                             + (-ct2 + ct3) * F[m + 2, vm + 2] - ct4 * F[m + 1, vm + 3]
+    # values at corners and edges has to be changed
+    # TO BE CONTINUED
 
     nxx = sigma_x * thickness
     nyy = sigma_y * thickness
@@ -698,18 +738,18 @@ if __name__ == '__main__':
         "x_direction": {
             "bottom": 0.0,
             "left": 0.0,
-            "right": 100.0,
+            "right": 0.0,
             "top": 0.0
         },
         "y_direction": {
             "bottom": 0.0,
             "left": 0.0,
             "right": 0.0,
-            "top": 0.0
+            "top": 100.0
         }}
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 0,
-                    "left": 2,
+                    "bottom": 2,
+                    "left": 0,
                     "right": 0,
                     "top": 0
                     }
@@ -724,9 +764,9 @@ if __name__ == '__main__':
     cmap = cm.get_cmap(name='jet', lut=40)
     norm = matplotlib.colors.Normalize()
     mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
-    mappable.set_array(g[0])
+    mappable.set_array(g[1])
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g[0], extent=(0, 25, 0, 25), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g[1], extent=(0, 25, 0, 25), interpolation='hermite', cmap=cmap)
     mappable.changed()
     plt.show()
