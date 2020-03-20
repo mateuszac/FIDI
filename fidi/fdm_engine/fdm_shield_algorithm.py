@@ -664,35 +664,35 @@ def compute_shield_one_direction(displacements, E, loads, supports, density, v, 
                        + (a4 + a5) * F[i-3, j-2] + (a5 + a6) * F[i-2, j-3] - a5 * F[i-3, j-3]) * 1 / (density ** 2)
 
     sigma_x = np.zeros((i - 2, j - 2))
-    for vm in range(j-3)[1:]:
-        for m in range(i-3)[1:]:
-            sigma_x[m, vm] = cx4 * F[m + 1, vm - 1] + (cx2 - cx3) * F[m, vm] + (-2 * cx2 - 2 * cx4) * F[m + 1, vm] \
-                             + (cx2 + cx3) * F[m + 2, vm] - cx1 * F[m - 1, vm + 1] + (2 * cx1 + 2 * cx3) * F[m, vm + 1]\
-                             + 0 * F[m + 1, vm + 1] + (-2 * cx1 - 2 * cx3) * F[m + 2, vm + 1] + cx1 * F[m + 3, vm + 1] \
-                             + (-cx2 - cx3) * F[m, vm + 2] + (2 * cx2 + 2 * cx4) * F[m + 1, vm + 2] \
-                             + (-cx2 + cx3) * F[m + 2, vm + 2] - cx4 * F[m + 1, vm + 3]
+    for vm in range(j - 3)[1:]:
+        for m in range(i - 3)[1:]:
+            sigma_x[m, vm] = (cx4 * F[m + 1, vm - 1] + (cx2 - cx3) * F[m, vm] + (-2 * cx2 - 2 * cx4) * F[m + 1, vm]
+                              + (cx2 + cx3) * F[m + 2, vm] - cx1 * F[m - 1, vm + 1] + (2 * cx1 + 2 * cx3) * F[m, vm + 1]
+                              + 0 * F[m + 1, vm + 1] + (-2 * cx1 - 2 * cx3) * F[m + 2, vm + 1] + cx1 * F[m + 3, vm + 1]
+                              + (-cx2 - cx3) * F[m, vm + 2] + (2 * cx2 + 2 * cx4) * F[m + 1, vm + 2]
+                              + (-cx2 + cx3) * F[m + 2, vm + 2] - cx4 * F[m + 1, vm + 3]) / (2 * density ** 3)
     # values at corners and edges has to be changed
     # TO BE CONTINUED
 
     sigma_y = np.zeros((i - 2, j - 2))
-    for vm in range(j-3)[1:]:
-        for m in range(i-3)[1:]:
-            sigma_y[m, vm] = cy4 * F[m + 1, vm - 1] + (cy1 - cy3) * F[m, vm] + (-2 * cy2 - 2 * cy4) * F[m + 1, vm] \
-                             + (cy2 + cy3) * F[m + 2, vm] - cy1 * F[m - 1, vm + 1] + (2 * cy1 + 2 * cy3) * F[m, vm + 1]\
-                             + 0 * F[m + 1, vm + 1] + (-2 * cy1 - 2 * cy3) * F[m + 2, vm + 1] + cy1 * F[m + 3, vm + 1] \
-                             + (-cy2 - cy3) * F[m, vm + 2] + (2 * cy2 + 2 * cy4) * F[m + 1, vm + 2] \
-                             + (-cy2 + cy3) * F[m + 2, vm + 2] - cy4 * F[m + 1, vm + 3]
+    for vm in range(j - 3)[1:]:
+        for m in range(i - 3)[1:]:
+            sigma_y[m, vm] = (cy4 * F[m + 1, vm - 1] + (cy1 - cy3) * F[m, vm] + (-2 * cy2 - 2 * cy4) * F[m + 1, vm]
+                              + (cy2 + cy3) * F[m + 2, vm] - cy1 * F[m - 1, vm + 1] + (2 * cy1 + 2 * cy3) * F[m, vm + 1]
+                              + 0 * F[m + 1, vm + 1] + (-2 * cy1 - 2 * cy3) * F[m + 2, vm + 1] + cy1 * F[m + 3, vm + 1]
+                              + (-cy2 - cy3) * F[m, vm + 2] + (2 * cy2 + 2 * cy4) * F[m + 1, vm + 2]
+                              + (-cy2 + cy3) * F[m + 2, vm + 2] - cy4 * F[m + 1, vm + 3]) / (2 * density ** 3)
     # values at corners and edges has to be changed
     # TO BE CONTINUED
 
     tau_xy = np.zeros((i - 2, j - 2))
-    for vm in range(j-3)[1:]:
-        for m in range(i-3)[1:]:
-            tau_xy[m, vm] = ct4 * F[m + 1, vm - 1] + (ct2 - ct3) * F[m, vm] + (-2 * ct2 - 2 * ct4) * F[m + 1, vm] \
-                             + (ct2 + ct3) * F[m + 2, vm] - ct1 * F[m - 1, vm + 1] + (2 * ct1 + 2 * ct3) * F[m, vm + 1]\
-                             + 0 * F[m + 1, vm + 1] + (-2 * ct1 - 2 * ct3) * F[m + 2, vm + 1] + ct1 * F[m + 3, vm + 1] \
-                             + (-ct2 - ct3) * F[m, vm + 2] + (2 * ct2 + 2 * ct4) * F[m + 1, vm + 2] \
-                             + (-ct2 + ct3) * F[m + 2, vm + 2] - ct4 * F[m + 1, vm + 3]
+    for vm in range(j - 3)[1:]:
+        for m in range(i - 3)[1:]:
+            tau_xy[m, vm] = (ct4 * F[m + 1, vm - 1] + (ct2 - ct3) * F[m, vm] + (-2 * ct2 - 2 * ct4) * F[m + 1, vm]
+                             + (ct2 + ct3) * F[m + 2, vm] - ct1 * F[m - 1, vm + 1] + (2 * ct1 + 2 * ct3) * F[m, vm + 1]
+                             + 0 * F[m + 1, vm + 1] + (-2 * ct1 - 2 * ct3) * F[m + 2, vm + 1] + ct1 * F[m + 3, vm + 1]
+                             + (-ct2 - ct3) * F[m, vm + 2] + (2 * ct2 + 2 * ct4) * F[m + 1, vm + 2]
+                             + (-ct2 + ct3) * F[m + 2, vm + 2] - ct4 * F[m + 1, vm + 3]) / (2 * density ** 3)
     # values at corners and edges has to be changed
     # TO BE CONTINUED
 
@@ -727,7 +727,7 @@ if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [np.zeros((25, 25)), np.zeros((25, 25)), None]
+            self.data = [np.zeros((5, 5)), np.zeros((5, 5)), None]
 
 
     test_class = TestMeshClass()
@@ -744,17 +744,17 @@ if __name__ == '__main__':
         "y_direction": {
             "bottom": 0.0,
             "left": 0.0,
-            "right": 0.0,
-            "top": 100.0
+            "right": -10.0,
+            "top": 0.0
         }}
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 2,
-                    "left": 0,
+                    "bottom": 0,
+                    "left": 2,
                     "right": 0,
                     "top": 0
                     }
     test_density = 1
-    test_poisson_ratio = 0.3
+    test_poisson_ratio = 0
     start = datetime.datetime.now()
     g = compute_shield(test_mesh, test_modulus_of_elasticity, test_load, test_supports, test_density,
                        test_poisson_ratio, test_thickness)
@@ -764,9 +764,9 @@ if __name__ == '__main__':
     cmap = cm.get_cmap(name='jet', lut=40)
     norm = matplotlib.colors.Normalize()
     mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
-    mappable.set_array(g[1])
+    mappable.set_array(g[0])
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g[1], extent=(0, 25, 0, 25), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g[0], extent=(1, 5, 0, 5), interpolation='hermite', cmap=cmap)
     mappable.changed()
     plt.show()
