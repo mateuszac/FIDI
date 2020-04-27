@@ -56,7 +56,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         A[0, 1] = -(3 + v) * (1 - v)
         A[0, 2] = (1 - v ** 2) / 2
         A[0, i] = -(3 + v) * (1 - v)
-        A[0, i + 1] = 2 * (3 - v)
+        A[0, i + 1] = 2 - 2 * v
         A[0, 2 * i] = (1 - v ** 2) / 2
 
     if supports["top"] in [1, 2] or supports["right"] in [1, 2]:   # top-right
@@ -68,7 +68,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         A[i - 1, i - 2] = -(3 + v) * (1 - v)
         A[i - 1, i - 3] = (1 - v ** 2) / 2
         A[i - 1, i + i - 1] = -(3 + v) * (1 - v)
-        A[i - 1, i + i - 2] = 2 * (3 - v)
+        A[i - 1, i + i - 2] = 2 - 2 * v
         A[i - 1, 2 * i + i - 1] = (1 - v ** 2) / 2
 
     if supports["bottom"] in [1, 2] or supports["left"] in [1, 2]:   # bottom-left
@@ -80,7 +80,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         A[(j - 1) * i, (j - 1) * i + 1] = -(3 + v) * (1 - v)
         A[(j - 1) * i, (j - 1) * i + 2] = (1 - v ** 2) / 2
         A[(j - 1) * i, (j - 2) * i] = -(3 + v) * (1 - v)
-        A[(j - 1) * i, (j - 2) * i + 1] = 2 * (3 - v)
+        A[(j - 1) * i, (j - 2) * i + 1] = 2 - 2 * v
         A[(j - 1) * i, (j - 3) * i] = (1 - v ** 2) / 2
 
     if supports["bottom"] in [1, 2] or supports["right"] in [1, 2]:   # bottom-right
@@ -92,7 +92,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         A[(j - 1) * i + i - 1, (j - 1) * i + i - 2] = -(3 + v) * (1 - v)
         A[(j - 1) * i + i - 1, (j - 1) * i + i - 3] = (1 - v ** 2) / 2
         A[(j - 1) * i + i - 1, (j - 2) * i + i - 1] = -(3 + v) * (1 - v)
-        A[(j - 1) * i + i - 1, (j - 2) * i + i - 2] = 2 * (3 - v)
+        A[(j - 1) * i + i - 1, (j - 2) * i + i - 2] = 2 - 2 * v
         A[(j - 1) * i + i - 1, (j - 3) * i + i - 1] = (1 - v ** 2) / 2
 
     """ 4. Setting equations for corner-edge points (B) """
@@ -194,7 +194,7 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         if vertical_edge == 0:
             if horizontal_edge == 0:
                 _p[node, 0] = (_q * _density ** 4) / _Dp
-                _A[node, n1] = -2 * (1 - _v)
+                _A[node, n1] = 2 * (1 - _v)
                 _A[node, n2] = -2 * (3 - _v)
                 _A[node, n3] = 2 - _v
                 _A[node, n4] = -2 * (3 - _v)
@@ -408,10 +408,10 @@ if __name__ == '__main__':
     test_flexural_stiffness = 0.2
     test_load = 50
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 2,
-                    "left": 0,
+                    "bottom": 0,
+                    "left": 2,
                     "right": 0,
-                    "top": 1
+                    "top": 2
                     }
     test_density = 1
     test_poisson_ratio = 0.3
