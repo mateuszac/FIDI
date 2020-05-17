@@ -65,6 +65,7 @@ class Prism(object):
         """setting initial statical quantities"""
         statics = statical_quantities(self._geometry['width'], self._geometry['height'], self._density,
                                       self._object_type, self._supports)
+        self._results = None
         self._nodes = statics[0].nodes
         self._displacements = statics[1].data
         self._rotations = statics[2].data
@@ -135,8 +136,8 @@ class Shield(Prism):
 
     def compute(self):
         self._computed = True
-        fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
-                           self._supports, self._density, self._material["v"])
+        self._results = fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
+                           self._supports, self._density, self._material["v"], self._geometry["height"])
 
 
 class Plate(Prism):
@@ -156,8 +157,9 @@ class Plate(Prism):
 
     def compute(self):
         self._computed = True
-        self._displacements[2] = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
-                                                   self._supports, self._density, self._material["v"])
+        self._results = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
+                                                self._supports, self._density, self._material["v"],
+                                                self._geometry["height"])
 
 
 class Shell(Shield, Plate):
@@ -169,11 +171,12 @@ class Shell(Shield, Plate):
 
     def compute(self):
         self._computed = True
-        fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
-                          self._supports, self._density, self._material["v"])
-        fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
-                           self._supports, self._density, self._material["v"])
-
+        self._results = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
+                                                self._supports, self._density, self._material["v"],
+                                                self._geometry["height"]) +\
+                        fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
+                                                  self._supports, self._density, self._material["v"],
+                                                  self._geometry["height"])
 
 if __name__ == '__main__':
 

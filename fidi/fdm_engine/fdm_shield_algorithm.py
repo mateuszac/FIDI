@@ -631,6 +631,8 @@ def compute_shield_one_direction(displacements, E, loads, supports, density, v, 
 
     """ 10. Calculation of u, v, sigma x, sigma y and tau xy and membrane forces from F matrix"""
 
+    blank = np.zeros((i, j))
+
     u = np.zeros((i-2, j-2))
     for vm in range(j-2):
         for m in range(i-2):
@@ -700,7 +702,7 @@ def compute_shield_one_direction(displacements, E, loads, supports, density, v, 
     nyy = sigma_y * thickness
     nxy = tau_xy * thickness
 
-    return [u.T, v.T, sigma_x.T, sigma_y.T, tau_xy.T, nxx.T, nyy.T, nxy.T]
+    return [u.T, v.T, blank, sigma_x.T, sigma_y.T, tau_xy.T, blank, blank, blank, nxx.T, nyy.T, nxy.T]
 
 
 def compute_shield(displacements, E, loads, supports, density, v, thickness):
@@ -727,7 +729,7 @@ if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [np.zeros((5, 5)), np.zeros((5, 5)), None]
+            self.data = [np.zeros((25, 25)), np.zeros((25, 25)), None]
 
 
     test_class = TestMeshClass()
@@ -744,12 +746,12 @@ if __name__ == '__main__':
         "y_direction": {
             "bottom": 0.0,
             "left": 0.0,
-            "right": -10.0,
-            "top": 0.0
+            "right": 0.0,
+            "top": 10.0
         }}
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 0,
-                    "left": 2,
+                    "bottom": 2,
+                    "left": 0,
                     "right": 0,
                     "top": 0
                     }
@@ -764,9 +766,9 @@ if __name__ == '__main__':
     cmap = cm.get_cmap(name='jet', lut=40)
     norm = matplotlib.colors.Normalize()
     mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
-    mappable.set_array(g[0])
+    mappable.set_array(g[1])
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g[0], extent=(1, 5, 0, 5), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g[1], extent=(1, 25, 0, 25), cmap=cmap)
     mappable.changed()
     plt.show()

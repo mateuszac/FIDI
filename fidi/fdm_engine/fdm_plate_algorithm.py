@@ -8,7 +8,7 @@ import matplotlib.cm as cm
 import matplotlib.colors
 
 
-def compute_plate(displacements, Dp, q, supports, density, v):
+def compute_plate(displacements, Dp, q, supports, density, v, h):
     """Apply boundary conditions for plate objects and compute values of displacement in every node of mesh"""
 
     """ 1. Data """
@@ -393,14 +393,142 @@ def compute_plate(displacements, Dp, q, supports, density, v):
         for m in range(i):
             W[m, vm] = round(wf[s, 0], 14)
             s += 1
-    return W.T
+
+    """ 9. Calculation of sigma x, sigma y and tau xy and moments from W matrix """
+
+    blank = np.zeros((i,j))
+
+    mxx = np.zeros((i, j))
+
+    # corners
+
+    mxx[0, 0] = (-Dp / density ** 2) * ((1+v) * W[0, 0] - 2 * W[1, 0] + 1 * W[2, 0] - 2*v * W[0, 1] + v * W[0, 2])
+    mxx[i-1, 0] = (-Dp / density ** 2) * ((1 + v) * W[i-1, 0] - 2 * W[i-2, 0] + 1 * W[i-3, 0] - 2 * v * W[i-1, 1]
+                                          + v * W[i-1, 2])
+    mxx[0, j-1] = (-Dp / density ** 2) * ((1 + v) * W[0, j-1] - 2 * W[1, j-1] + 1 * W[2, j-1] - 2 * v * W[0, j-2]
+                                          + v * W[0, j-3])
+    mxx[i-1, j-1] = (-Dp / density ** 2) * ((1 + v) * W[i-1, j-1] - 2 * W[i-2, j-1] + 1 * W[i-3, j-1]
+                                            - 2 * v * W[i-1, j-2] + v * W[i-1, j-3])
+
+    # edges
+
+    for m in range(i-2):  # top
+        m += 1
+        mxx[m, 0] = (-Dp / density ** 2) * (1 * W[m-1, 0] + (-2+v) * W[m, 0] + 1 * W[m+1, 0]
+                                            - 2*v * W[m, 1] + v * W[m, 2])
+    for m in range(i-2):  # bottom
+        m += 1
+        mxx[m, j-1] = (-Dp / density ** 2) * (1 * W[m-1, j-1] + (-2+v) * W[m, j-1] + 1 * W[m+1, j-1]
+                                            - 2*v * W[m, j-2] + v * W[m, j-3])
+    for m in range(j-2):  # left
+        m += 1
+        mxx[0, m] = (-Dp / density ** 2) * (v * W[0, m-1] + (-2*v+1) * W[0, m] + v * W[0, m+1]
+                                            - 2 * W[1, m] + 1 * W[2, m])
+    for m in range(j - 2):  # right
+        m += 1
+        mxx[i-1, m] = (-Dp / density ** 2) * (v * W[i-1, m - 1] + (-2 * v + 1) * W[i-1, m] + v * W[i-1, m + 1]
+                                            - 2 * W[i-2, m] + 1 * W[i-3, m])
+
+    # central points
+
+    for vm in range(j-2):
+        vm += 1
+        for m in range(i-2):
+            m += 1
+            mxx[m, vm] = (-Dp / density ** 2) * (1 * W[m-1, vm] + v * W[m, vm-1]+ (-2-2*v) * W[m, vm] + 1 * W[m+1, vm]
+                                                 + v * W[m, vm+1])
+
+    myy = np.zeros((i, j))
+
+    # corners
+
+    myy[0, 0] = (-Dp / density ** 2) * ((1 + v) * W[0, 0] - 2*v * W[1, 0] + v * W[2, 0] - 2 * W[0, 1] + 1 * W[0, 2])
+    myy[i - 1, 0] = (-Dp / density ** 2) * (
+                (1 + v) * W[i - 1, 0] - 2*v * W[i - 2, 0] + v * W[i - 3, 0] - 2 * W[i - 1, 1]
+                + 1 * W[i - 1, 2])
+    myy[0, j - 1] = (-Dp / density ** 2) * (
+                (1 + v) * W[0, j - 1] - 2 * v * W[1, j - 1] + v * W[2, j - 1] - 2 * W[0, j - 2]
+                + 1 * W[0, j - 3])
+    myy[i - 1, j - 1] = (-Dp / density ** 2) * ((1 + v) * W[i - 1, j - 1] - 2 * v * W[i - 2, j - 1] +
+                                                v * W[i - 3, j - 1] - 2 * W[i - 1, j - 2] + 1 * W[i - 1, j - 3])
+
+    # edges
+
+    for m in range(i - 2):  # top
+        m += 1
+        myy[m, 0] = (-Dp / density ** 2) * (v * W[m - 1, 0] + (-2*v + 1) * W[m, 0] + v * W[m + 1, 0]
+                                            - 2 * W[m, 1] + 1 * W[m, 2])
+    for m in range(i - 2):  # bottom
+        m += 1
+        myy[m, j - 1] = (-Dp / density ** 2) * (v * W[m - 1, j - 1] + (-2*v + 1) * W[m, j - 1] + v * W[m + 1, j - 1]
+                                                - 2 * W[m, j - 2] + 1 * W[m, j - 3])
+    for m in range(j - 2):  # left
+        m += 1
+        myy[0, m] = (-Dp / density ** 2) * (1 * W[0, m - 1] + (-2 + v) * W[0, m] + 1 * W[0, m + 1]
+                                            - 2 * v * W[1, m] + v * W[2, m])
+    for m in range(j - 2):  # right
+        m += 1
+        myy[i - 1, m] = (-Dp / density ** 2) * (1 * W[i - 1, m - 1] + (-2 + v) * W[i - 1, m] + 1 * W[i - 1, m + 1]
+                                                - 2 * v * W[i - 2, m] + v * W[i - 3, m])
+
+    # central points
+
+    for vm in range(j - 2):
+        vm += 1
+        for m in range(i - 2):
+            m += 1
+            myy[m, vm] = (-Dp / density ** 2) * (
+                        v * W[m - 1, vm] + 1 * W[m, vm - 1] + (-2 - 2 * v) * W[m, vm] + v * W[m + 1, vm]
+                        + 1 * W[m, vm + 1])
+
+    mxy = np.zeros((i, j))
+
+    mxy[0, 0] = ((Dp * (1-v))/(density ** 2)) * (W[0, 0] - W[1, 0] - W[0, 1] + W[1, 1])
+    mxy[i - 1, 0] = ((-Dp * (1-v))/(density ** 2)) * (W[i - 1, 0] - W[i - 2, 0] - W[i - 1, 1] + W[i - 2, 1])
+    mxy[0, j - 1] = ((-Dp * (1-v))/(density ** 2)) * (W[0, j - 1] - W[1, j - 1] - W[0, j - 2] + W[1, j - 2])
+    mxy[i - 1, j - 1] = ((Dp * (1-v))/(density ** 2)) * (W[i - 1, j - 1] - W[i - 2, j - 1] - W[i - 1, j - 2]
+                                                          + W[i - 2, j - 2])
+
+    # edges
+
+    for m in range(i - 2):  # top
+        m += 1
+        mxy[m, 0] = ((Dp * (1-v))/(2*density ** 2)) * (W[m-1, 0] - W[m+1, 0] - W[m-1, 1] + W[m+1, 1])
+    for m in range(i - 2):  # bottom
+        m += 1
+        mxy[m, j - 1] = ((-Dp * (1-v))/(2*density ** 2)) * (W[m-1, j - 1] - W[m+1, j - 1] - W[m-1, j - 2]
+                                                            + W[m+1, j - 2])
+    for m in range(j - 2):  # left
+        m += 1
+        mxy[0, m] = ((Dp * (1-v))/(2*density ** 2)) * (W[0, m-1] - W[0, m+1] - W[1, m-1] + W[1, m+1])
+    for m in range(j - 2):  # right
+        m += 1
+        mxy[i - 1, m] = ((-Dp * (1-v))/(2*density ** 2)) * (W[i - 1, m-1] - W[i - 1, m+1] - W[i - 2, m-1]
+                                                            + W[i - 2, m+1])
+
+    # central points
+
+    for vm in range(j - 2):
+        vm += 1
+        for m in range(i - 2):
+            m += 1
+            mxy[m, vm] = ((-Dp * (1-v))/(4*density ** 2)) * (-W[m - 1, vm-1] + W[m + 1, vm - 1] + W[m - 1, vm + 1]
+                                                             - W[m + 1, vm + 1])
+
+    sigma_x = (12*mxx*0.5*h)/(h**3)
+
+    sigma_y = (12 * myy * 0.5 * h) / (h ** 3)
+
+    tau_xy = (12 * mxy * 0.5 * h) / (h ** 3)
+
+    return [blank, blank, W.T, sigma_x.T, sigma_y.T, tau_xy.T, mxx.T, myy.T, mxy.T, blank, blank, blank]
 
 
 if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [None, None, np.zeros((40, 40))]
+            self.data = [None, None, np.zeros((50, 50))]
 
 
     test_class = TestMeshClass()
@@ -408,25 +536,27 @@ if __name__ == '__main__':
     test_flexural_stiffness = 0.2
     test_load = 50
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 0,
-                    "left": 2,
-                    "right": 0,
-                    "top": 2
+                    "bottom": 1,
+                    "left": 1,
+                    "right": 1,
+                    "top": 1
                     }
     test_density = 1
     test_poisson_ratio = 0.3
+    test_height = 0.2
     start = datetime.datetime.now()
-    g = compute_plate(test_mesh, test_flexural_stiffness, test_load, test_supports, test_density, test_poisson_ratio)
+    g = compute_plate(test_mesh, test_flexural_stiffness, test_load, test_supports, test_density, test_poisson_ratio,
+                      test_height)
     duration = datetime.datetime.now() - start   # time of calculations
-    print(g)
+    print(g[2])
     print(duration)
     fig, ax = plt.subplots(1, 2)
     cmap = cm.get_cmap(name='jet', lut=40)
     norm = matplotlib.colors.Normalize()
     mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
-    mappable.set_array(g)
+    mappable.set_array(g[2])
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g, extent=(0, 40, 0, 40), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g[8], extent=(0, 50, 0, 50), interpolation='hermite', cmap=cmap)
     mappable.changed()
     plt.show()
