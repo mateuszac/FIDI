@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>655</width>
-    <height>563</height>
+    <height>586</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -819,7 +819,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Stesses (σy)</string>
+             <string>Stresses (σy)</string>
             </property>
            </widget>
           </item>
@@ -850,7 +850,7 @@
      <x>0</x>
      <y>0</y>
      <width>655</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGeometry">

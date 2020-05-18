@@ -9,6 +9,9 @@ from fidi.attributes.saving_attributes import gui_save_file
 from fidi.attributes import loading_attributes as obj
 import json
 import datetime
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.colors
 
 
 class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
@@ -78,6 +81,14 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
         self.ui.CalculateButton.released.connect(self.calculate)
+        # Results of calculations :
+        self.ui.w_button.released.connect(self.w_results)
+        self.ui.sigma_x_button.released.connect(self.sigma_x_results)
+        self.ui.sigma_y_button.released.connect(self.sigma_y_results)
+        self.ui.tau_xy_button.released.connect(self.tau_xy_results)
+        self.ui.Mxx_button.released.connect(self.mxx_results)
+        self.ui.Myy_button.released.connect(self.myy_results)
+        self.ui.Mxy_button.released.connect(self.mxy_results)
 
     def new_shield(self):
         """Opens shield window, imports all widgets from QTdesigner file and gives functionality to widgets
@@ -96,6 +107,15 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
         self.ui.CalculateButton.released.connect(self.calculate)
+        # Results of calculations :
+        self.ui.u_button.released.connect(self.u_results)
+        self.ui.v_button.released.connect(self.v_results)
+        self.ui.sigma_x_button.released.connect(self.sigma_x_results)
+        self.ui.sigma_y_button.released.connect(self.sigma_y_results)
+        self.ui.tau_xy_button.released.connect(self.tau_xy_results)
+        self.ui.Nxx_button.released.connect(self.nxx_results)
+        self.ui.Nyy_button.released.connect(self.nyy_results)
+        self.ui.Nxy_button.released.connect(self.nxy_results)
 
     def new_shell(self):
         """Opens shell window, imports all widgets from QTdesigner file and gives functionality to widgets
@@ -114,42 +134,55 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
         self.ui.CalculateButton.released.connect(self.calculate)
+        # Results of calculations :
+        self.ui.u_button.released.connect(self.u_results)
+        self.ui.v_button.released.connect(self.v_results)
+        self.ui.w_button.released.connect(self.w_results)
+        self.ui.sigma_x_button.released.connect(self.sigma_x_results)
+        self.ui.sigma_y_button.released.connect(self.sigma_y_results)
+        self.ui.tau_xy_button.released.connect(self.tau_xy_results)
+        self.ui.Nxx_button.released.connect(self.nxx_results)
+        self.ui.Nyy_button.released.connect(self.nyy_results)
+        self.ui.Nxy_button.released.connect(self.nxy_results)
+        self.ui.Mxx_button.released.connect(self.mxx_results)
+        self.ui.Myy_button.released.connect(self.myy_results)
+        self.ui.Mxy_button.released.connect(self.mxy_results)
 
     def gather_data(self):
-        """Gathers data from user and saves it into a list with dict containing
-         data and information if mesh is proper
-         """
-        type_of_element = self.ui.type
-        loads_plate = None
-        loads_shield = None
-        if type_of_element == 1 or type_of_element == 3:  # shields or shells
-            if type_of_element == 1:
-                loads_plate = None
+            """Gathers data from user and saves it into a list with dict containing
+             data and information if mesh is proper
+             """
+            type_of_element = self.ui.type
+            loads_plate = None
+            loads_shield = None
+            if type_of_element == 1 or type_of_element == 3:  # shields or shells
+                if type_of_element == 1:
+                    loads_plate = None
 
-            x_left = self.ui.XLInput.value()
-            x_right = self.ui.XRInput.value()
-            x_bottom = self.ui.XBInput.value()
-            x_top = self.ui.XTInput.value()
-            y_left = self.ui.YLInput.value()
-            y_right = self.ui.YRInput.value()
-            y_bottom = self.ui.YBInput.value()
-            y_top = self.ui.YTInput.value()
+                x_left = self.ui.XLInput.value()
+                x_right = self.ui.XRInput.value()
+                x_bottom = self.ui.XBInput.value()
+                x_top = self.ui.XTInput.value()
+                y_left = self.ui.YLInput.value()
+                y_right = self.ui.YRInput.value()
+                y_bottom = self.ui.YBInput.value()
+                y_top = self.ui.YTInput.value()
 
-            loads_shield = att.shield_loads_dict(x_left, x_bottom, x_right, x_top, y_left, y_bottom, y_right, y_top)
-        if type_of_element == 2 or type_of_element == 3:  # plates or shells
-            if type_of_element == 2:
-                loads_shield = None
+                loads_shield = att.shield_loads_dict(x_left, x_bottom, x_right, x_top, y_left, y_bottom, y_right, y_top)
+            if type_of_element == 2 or type_of_element == 3:  # plates or shells
+                if type_of_element == 2:
+                    loads_shield = None
 
-            loads_plate = self.ui.QInput.value()
+                loads_plate = self.ui.QInput.value()
 
-        return att.gui_collecting_attributes(type_of_element, self.ui.NameInput.text(),
-                                             self.ui.ThicknessInput.value(), self.ui.WidthInput.value(),
-                                             self.ui.HeightInput.value(), self.ui.DensityInput.value(),
-                                             self.ui.EInput.value(), self.ui.vInput.value(),
-                                             loads_plate, loads_shield, self.ui.LeftSupportInput.currentText(),
-                                             self.ui.RightSupportInput.currentText(),
-                                             self.ui.TopSupportInput.currentText(),
-                                             self.ui.BottomSupportInput.currentText())
+            return att.gui_collecting_attributes(type_of_element, self.ui.NameInput.text(),
+                                                 self.ui.ThicknessInput.value(), self.ui.WidthInput.value(),
+                                                 self.ui.HeightInput.value(), self.ui.DensityInput.value(),
+                                                 self.ui.EInput.value(), self.ui.vInput.value(),
+                                                 loads_plate, loads_shield, self.ui.LeftSupportInput.currentText(),
+                                                 self.ui.RightSupportInput.currentText(),
+                                                 self.ui.TopSupportInput.currentText(),
+                                                 self.ui.BottomSupportInput.currentText())
 
     def save(self):
         """Saves attributes into json file in temporary folder json_files"""
@@ -263,6 +296,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             else:
                 self.prism = obj.Shell(data)
 
+            self.numeric_supports(self.prism.supports)
             start = datetime.datetime.now()
             self.prism.compute()
             duration = datetime.datetime.now() - start  # time of calculations
@@ -273,6 +307,16 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         warning_window = QtWidgets.QMessageBox()
         warning_window.setText(text)
         warning_window.exec()
+
+    def numeric_supports(self, some_supports):
+        """converts strings in supports to numbers"""
+        for direction in some_supports:
+            if some_supports[direction] == "Free":
+                some_supports[direction] = 0
+            elif some_supports[direction] == "Hinged":
+                some_supports[direction] = 1
+            else:
+                some_supports[direction] = 2
 
     def gui_input(self, inp):
         """Prevents from entering inappropriate input"""
@@ -351,8 +395,142 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             self.data_error = 1
 
         self.data = data
-        for i in range(len(self.data)): # DELETE THIS LINES
-            print(self.data[i])         # THERE ARE ONLY FOR TESTING
+
+    def map_plot(self, data):
+        """Creates window with map of results"""
+        (ii, jj) = data.shape
+        ii *= self.prism._density
+        jj *= self.prism._density
+        fig, ax = plt.subplots(1, 2)
+        cmap = cm.get_cmap(name='jet', lut=40)
+        norm = matplotlib.colors.Normalize()
+        mappable = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
+        mappable.set_array(data)
+        mappable.autoscale()
+        matplotlib.pyplot.colorbar(mappable, ax[1])
+        ax[0].imshow(data, extent=(0, ii, 0, jj), interpolation='hermite', cmap=cmap)
+        mappable.changed()
+        plt.show()
+
+    def u_results(self):
+        """Displays results of displacements (u) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[0])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def v_results(self):
+        """Displays results of displacements (v) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[1])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def w_results(self):
+        """Displays results of deflections (w) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[2])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def sigma_x_results(self):
+        """Displays results of stresses (sigma_x) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[3])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def sigma_y_results(self):
+        """Displays results of stresses (sigma_y) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[4])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def tau_xy_results(self):
+        """Displays results of stresses (tau_xy) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[5])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def mxx_results(self):
+        """Displays results of moments (mxx) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[6])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def myy_results(self):
+        """Displays results of moments (myy) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[7])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def mxy_results(self):
+        """Displays results of moments (mxy) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[8])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def nxx_results(self):
+        """Displays results of membrane forces (nxx) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[9])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def nyy_results(self):
+        """Displays results of membrane forces (nyy) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[10])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
+
+    def nxy_results(self):
+        """Displays results of membrane forces (nxy) calculations"""
+        try:
+            if self.prism.computed is False:
+                self.warning("Results are not available, please perform the calculations first")
+            else:
+                self.map_plot(self.prism.results[11])
+        except AttributeError:
+            self.warning("Results are not available, please perform the calculations first")
 
 
 if __name__ == '__main__':

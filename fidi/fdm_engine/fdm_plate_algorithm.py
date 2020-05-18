@@ -12,7 +12,6 @@ def compute_plate(displacements, Dp, q, supports, density, v, h):
     """Apply boundary conditions for plate objects and compute values of displacement in every node of mesh"""
 
     """ 1. Data """
-
     wf = displacements[2]  # displacements on z dimension
     (i, j) = wf.shape  # i/j - number of nodes on x/y dimension
     n = i * j  # amount of nodes
@@ -528,25 +527,25 @@ if __name__ == '__main__':
 
     class TestMeshClass(object):
         def __init__(self):
-            self.data = [None, None, np.zeros((50, 50))]
+            self.data = [None, None, np.zeros((9, 9))]
 
 
     test_class = TestMeshClass()
     test_mesh = test_class.data
     test_flexural_stiffness = 0.2
-    test_load = 50
+    test_load = 2000
     test_supports = {           # 0 - free end  1 - hinged  2 - fixed
-                    "bottom": 1,
-                    "left": 1,
-                    "right": 1,
-                    "top": 1
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 2,
+                    "top": 0
                     }
-    test_density = 1
+    test_density = 0.5
     test_poisson_ratio = 0.3
-    test_height = 0.2
+    test_thickness = 0.25
     start = datetime.datetime.now()
     g = compute_plate(test_mesh, test_flexural_stiffness, test_load, test_supports, test_density, test_poisson_ratio,
-                      test_height)
+                      test_thickness)
     duration = datetime.datetime.now() - start   # time of calculations
     print(g[2])
     print(duration)
@@ -557,6 +556,6 @@ if __name__ == '__main__':
     mappable.set_array(g[2])
     mappable.autoscale()
     matplotlib.pyplot.colorbar(mappable, ax[1])
-    ax[0].imshow(g[8], extent=(0, 50, 0, 50), interpolation='hermite', cmap=cmap)
+    ax[0].imshow(g[2], extent=(0, 50, 0, 50), interpolation='hermite', cmap=cmap)
     mappable.changed()
     plt.show()

@@ -5,8 +5,8 @@ import numpy as np
 class Mesh(object):
     """Creation of empty mesh matrix"""
     def __init__(self, width, height, density):
-        Nx = int(width/density + 1)
-        Ny = int(height/density + 1)
+        Nx = int(width/density)
+        Ny = int(height/density)
         self.nodes = (Nx, Ny)
 
     @property

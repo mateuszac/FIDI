@@ -60,12 +60,12 @@ class Prism(object):
         self._density = json_data['density']
         self._supports = json_data['supports']
         self._object_type = json_data['object_type']
-        self._computed = computed
+        self.computed = computed
 
         """setting initial statical quantities"""
         statics = statical_quantities(self._geometry['width'], self._geometry['height'], self._density,
                                       self._object_type, self._supports)
-        self._results = None
+        self.results = None
         self._nodes = statics[0].nodes
         self._displacements = statics[1].data
         self._rotations = statics[2].data
@@ -128,16 +128,16 @@ class Shield(Prism):
             for load in direction:
                 load *= 1000  # loads are now in N/m
         # Stiffness of shield
-        self._Ds = (self._material["E"] * self._geometry["height"]) / (1 - self._material["v"] ** 2)
+        self._Ds = (self._material["E"] * self._geometry["thickness"]) / (1 - self._material["v"] ** 2)
 
     @property
     def loads_shield(self):
         return self._loads_shield
 
     def compute(self):
-        self._computed = True
-        self._results = fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
-                           self._supports, self._density, self._material["v"], self._geometry["height"])
+        self.computed = True
+        self.results = fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
+                        self._supports, self._density, self._material["v"], self._geometry["thickness"])
 
 
 class Plate(Prism):
@@ -149,17 +149,17 @@ class Plate(Prism):
         self._loads_plate = json_data['loads_plate']
         self._loads_plate *= 1000  # load is now in N/m2
         # Flexural stiffness of plate
-        self._Dp = (self._material["E"]*self._geometry["height"]**3)/(12*(1-self._material["v"]**2))
+        self._Dp = (self._material["E"]*self._geometry["thickness"]**3)/(12*(1-self._material["v"]**2))
 
     @property
     def loads_plate(self):
         return self._loads_plate
 
     def compute(self):
-        self._computed = True
-        self._results = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
+        self.computed = True
+        self.results = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
                                                 self._supports, self._density, self._material["v"],
-                                                self._geometry["height"])
+                                                self._geometry["thickness"])
 
 
 class Shell(Shield, Plate):
@@ -170,13 +170,14 @@ class Shell(Shield, Plate):
         super().__init__(json_data)
 
     def compute(self):
-        self._computed = True
-        self._results = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
+        self.computed = True
+        self.results = fdm_plate.compute_plate(self._displacements, self._Dp, self._loads_plate,
                                                 self._supports, self._density, self._material["v"],
-                                                self._geometry["height"]) +\
+                                                self._geometry["thickness"]) +\
                         fdm_shield.compute_shield(self._displacements, self._material["E"], self._loads_shield,
                                                   self._supports, self._density, self._material["v"],
-                                                  self._geometry["height"])
+                                                  self._geometry["thickness"])
+
 
 if __name__ == '__main__':
 
