@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'about_fidi.ui',
 # licensing of 'about_fidi.ui' applies.
 #
-# Created: Sat Nov  2 16:19:09 2019
+# Created: Mon May 18 18:01:12 2020
 #      by: pyside2-uic  running on PySide2 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -76,10 +76,11 @@ class Ui_AboutFidi(object):
     def retranslateUi(self, AboutFidi):
         AboutFidi.setWindowTitle(QtWidgets.QApplication.translate("AboutFidi", "MainWindow", None, -1))
         self.label.setText(QtWidgets.QApplication.translate("AboutFidi", "FIDI", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("AboutFidi", "Version 0.2", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("AboutFidi", "Version 1.0", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("AboutFidi", "Author : Mateusz Borecki", None, -1))
         self.plainTextEdit.setPlainText(QtWidgets.QApplication.translate("AboutFidi", "FIDI is open source program released under GNU GPL v3.0 license.\n"
 "\n"
 "Program is able to analyze plate, shield and flat shell structures using Finite Differences Method. Project has been written as master’s thesis by Eng. Mateusz Borecki under the supervision of PhD Eng. Roman Putanowicz at the Cracow University of Technology.\n"
-"", None, -1))
+"\n"
+"The author is not responsible for the data, information and results of calculations obtained from this software. Use at your own risk. Data and calculation results should be checked each time.", None, -1))
 

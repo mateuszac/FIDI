@@ -48,7 +48,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Version 0.2</string>
+       <string>Version 1.0</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -86,7 +86,8 @@
        <string>FIDI is open source program released under GNU GPL v3.0 license.
 
 Program is able to analyze plate, shield and flat shell structures using Finite Differences Method. Project has been written as master’s thesis by Eng. Mateusz Borecki under the supervision of PhD Eng. Roman Putanowicz at the Cracow University of Technology.
-</string>
+
+The author is not responsible for the data, information and results of calculations obtained from this software. Use at your own risk. Data and calculation results should be checked each time.</string>
       </property>
      </widget>
     </item>
