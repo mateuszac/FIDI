@@ -478,7 +478,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[6]/1000)   # in [kNm]
+                self.map_plot(self.prism.results[6]/1000)   # in [kNm/m]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -488,7 +488,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[7]/1000)   # in [kNm]
+                self.map_plot(self.prism.results[7]/1000)   # in [kNm/m]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -498,7 +498,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[8]/1000)   # in [kNm]
+                self.map_plot(self.prism.results[8]/1000)   # in [kNm/m]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -508,7 +508,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[9]/1000)   # in [kN]
+                self.map_plot(self.prism.results[9]/1000)   # in [kN/m]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -518,7 +518,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[10]/1000)   # in [kN]
+                self.map_plot(self.prism.results[10]/1000)   # in [kN/m]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -528,7 +528,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[11]/1000)   # in [kN]
+                self.map_plot(self.prism.results[11]/1000)   # in [kN/m]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
