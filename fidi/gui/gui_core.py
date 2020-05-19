@@ -418,7 +418,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[0])
+                self.map_plot(self.prism.results[0]*100)  # in [cm]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -428,7 +428,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[1])
+                self.map_plot(self.prism.results[1])  # in [cm]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -438,7 +438,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[2])
+                self.map_plot(self.prism.results[2])  # in [cm]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -448,7 +448,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[3])
+                self.map_plot(self.prism.results[3]/1000000)   # in [MPa]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -458,7 +458,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[4])
+                self.map_plot(self.prism.results[4]/1000000)   # in [MPa]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -468,7 +468,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[5])
+                self.map_plot(self.prism.results[5]/1000000)   # in [MPa]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -478,7 +478,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[6])
+                self.map_plot(self.prism.results[6]/1000)   # in [kNm]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -488,7 +488,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[7])
+                self.map_plot(self.prism.results[7]/1000)   # in [kNm]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -498,7 +498,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[8])
+                self.map_plot(self.prism.results[8]/1000)   # in [kNm]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -508,7 +508,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[9])
+                self.map_plot(self.prism.results[9]/1000)   # in [kN]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -518,7 +518,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[10])
+                self.map_plot(self.prism.results[10]/1000)   # in [kN]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
@@ -528,7 +528,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             if self.prism.computed is False:
                 self.warning("Results are not available, please perform the calculations first")
             else:
-                self.map_plot(self.prism.results[11])
+                self.map_plot(self.prism.results[11]/1000)   # in [kN]
         except AttributeError:
             self.warning("Results are not available, please perform the calculations first")
 
