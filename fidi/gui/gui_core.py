@@ -81,6 +81,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
         self.ui.CalculateButton.released.connect(self.calculate)
+        self.ui.CheckMeshButton.released.connect(self.check_mesh)
         # Results of calculations :
         self.ui.w_button.released.connect(self.w_results)
         self.ui.sigma_x_button.released.connect(self.sigma_x_results)
@@ -107,6 +108,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
         self.ui.CalculateButton.released.connect(self.calculate)
+        self.ui.CheckMeshButton.released.connect(self.check_mesh)
         # Results of calculations :
         self.ui.u_button.released.connect(self.u_results)
         self.ui.v_button.released.connect(self.v_results)
@@ -134,6 +136,7 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
         self.ui.LoadButton.released.connect(self.load)
         self.ui.SaveButton.released.connect(self.save)
         self.ui.CalculateButton.released.connect(self.calculate)
+        self.ui.CheckMeshButton.released.connect(self.check_mesh)
         # Results of calculations :
         self.ui.u_button.released.connect(self.u_results)
         self.ui.v_button.released.connect(self.v_results)
@@ -395,6 +398,17 @@ class FidiInterface(starting_window.Ui_StartingWindow, QtWidgets.QMainWindow):
             self.data_error = 1
 
         self.data = data
+
+    def check_mesh(self):
+        """Method designed for user to check if chosen mesh is enough dense"""
+        _v1 = self.ui.CheckValue_1.value()
+        _v2 = self.ui.CheckValue2.value()
+        _error = abs(_v2 - _v1) / _v2
+        _epsilon = 0.05
+        if _error < _epsilon:
+            self.ui.CheckMeshBox.setChecked(True)
+        else:
+            self.ui.CheckMeshBox.setChecked(False)
 
     def map_plot(self, data):
         """Creates window with map of results"""

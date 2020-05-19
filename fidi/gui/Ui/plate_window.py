@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'plate_window.ui',
 # licensing of 'plate_window.ui' applies.
 #
-# Created: Mon May 18 18:01:14 2020
+# Created: Tue May 19 23:57:34 2020
 #      by: pyside2-uic  running on PySide2 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainPlateWindow(object):
     def setupUi(self, MainPlateWindow):
         MainPlateWindow.setObjectName("MainPlateWindow")
-        MainPlateWindow.resize(655, 563)
+        MainPlateWindow.resize(690, 483)
         self.PlateWindow = QtWidgets.QWidget(MainPlateWindow)
         self.PlateWindow.setObjectName("PlateWindow")
         self.gridLayout = QtWidgets.QGridLayout(self.PlateWindow)
@@ -339,10 +339,6 @@ class Ui_MainPlateWindow(object):
         self.gridLayout_4 = QtWidgets.QGridLayout(self.Results)
         self.gridLayout_4.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.widget = MplWidget(self.Results)
-        self.widget.setMinimumSize(QtCore.QSize(0, 400))
-        self.widget.setObjectName("widget")
-        self.gridLayout_4.addWidget(self.widget, 2, 0, 1, 1)
         self.gridLayout_5 = QtWidgets.QGridLayout()
         self.gridLayout_5.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.gridLayout_5.setHorizontalSpacing(6)
@@ -405,11 +401,51 @@ class Ui_MainPlateWindow(object):
         self.tau_xy_button.setObjectName("tau_xy_button")
         self.gridLayout_5.addWidget(self.tau_xy_button, 3, 2, 1, 1)
         self.gridLayout_4.addLayout(self.gridLayout_5, 1, 0, 1, 1)
+        self.textEdit = QtWidgets.QTextEdit(self.Results)
+        self.textEdit.setReadOnly(True)
+        self.textEdit.setObjectName("textEdit")
+        self.gridLayout_4.addWidget(self.textEdit, 2, 0, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.label_17 = QtWidgets.QLabel(self.Results)
+        self.label_17.setObjectName("label_17")
+        self.verticalLayout_7.addWidget(self.label_17)
+        self.CheckValue_1 = QtWidgets.QDoubleSpinBox(self.Results)
+        self.CheckValue_1.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.CheckValue_1.setMinimum(-999999.0)
+        self.CheckValue_1.setMaximum(999999.0)
+        self.CheckValue_1.setSingleStep(0.01)
+        self.CheckValue_1.setObjectName("CheckValue_1")
+        self.verticalLayout_7.addWidget(self.CheckValue_1)
+        self.horizontalLayout_3.addLayout(self.verticalLayout_7)
+        self.verticalLayout_8 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
+        self.label_18 = QtWidgets.QLabel(self.Results)
+        self.label_18.setObjectName("label_18")
+        self.verticalLayout_8.addWidget(self.label_18)
+        self.CheckValue2 = QtWidgets.QDoubleSpinBox(self.Results)
+        self.CheckValue2.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.CheckValue2.setMinimum(-999999.0)
+        self.CheckValue2.setMaximum(999999.0)
+        self.CheckValue2.setSingleStep(0.01)
+        self.CheckValue2.setObjectName("CheckValue2")
+        self.verticalLayout_8.addWidget(self.CheckValue2)
+        self.horizontalLayout_3.addLayout(self.verticalLayout_8)
+        self.CheckMeshButton = QtWidgets.QPushButton(self.Results)
+        self.CheckMeshButton.setObjectName("CheckMeshButton")
+        self.horizontalLayout_3.addWidget(self.CheckMeshButton)
+        self.CheckMeshBox = QtWidgets.QCheckBox(self.Results)
+        self.CheckMeshBox.setEnabled(False)
+        self.CheckMeshBox.setObjectName("CheckMeshBox")
+        self.horizontalLayout_3.addWidget(self.CheckMeshBox)
+        self.gridLayout_4.addLayout(self.horizontalLayout_3, 3, 0, 1, 1)
         self.tabWidget.addTab(self.Results, "")
         self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainPlateWindow.setCentralWidget(self.PlateWindow)
         self.menubar = QtWidgets.QMenuBar(MainPlateWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 655, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 690, 21))
         self.menubar.setObjectName("menubar")
         self.menuGeometry = QtWidgets.QMenu(self.menubar)
         self.menuGeometry.setObjectName("menuGeometry")
@@ -474,8 +510,25 @@ class Ui_MainPlateWindow(object):
         self.sigma_x_button.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Stresses (σx)", None, -1))
         self.Myy_button.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Moments (Myy)", None, -1))
         self.Mxy_button.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Moments (Mxy)", None, -1))
-        self.sigma_y_button.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Stesses (σy)", None, -1))
+        self.sigma_y_button.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Stresses (σy)", None, -1))
         self.tau_xy_button.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Stresses (τxy)", None, -1))
+        self.textEdit.setHtml(QtWidgets.QApplication.translate("MainPlateWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:9.75pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Displacements and deflections are given in [cm]</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Membrane forces and moments are given in [kN/m] and [kNm/m]</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Stresses are given in [MPa]</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Red colour (Positive Sign) corresponds to the tension of bottom fibers of plates.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">The author is not responsible for the data, information and results of calculations obtained from this software. Use at your own risk. Data and calculation results should be checked each time.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">For verification if chosen density of mesh is enough, you may use the tool attached below. Pick one point of structure and check value in that point from this mesh and twice less dense mesh, then hit CHECK MESH button. If mesh is proper, sufficient mesh density box will be checked.</span></p></body></html>", None, -1))
+        self.label_17.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Value from first mesh", None, -1))
+        self.label_18.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Value from denser mesh", None, -1))
+        self.CheckMeshButton.setText(QtWidgets.QApplication.translate("MainPlateWindow", "CHECK MESH", None, -1))
+        self.CheckMeshBox.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Sufficient mesh density", None, -1))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Results), QtWidgets.QApplication.translate("MainPlateWindow", "Results", None, -1))
         self.menuGeometry.setTitle(QtWidgets.QApplication.translate("MainPlateWindow", "File", None, -1))
         self.menuLoads.setTitle(QtWidgets.QApplication.translate("MainPlateWindow", "Info", None, -1))
@@ -486,5 +539,4 @@ class Ui_MainPlateWindow(object):
         self.actionClose.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Close", None, -1))
         self.actionAbout_FIDI.setText(QtWidgets.QApplication.translate("MainPlateWindow", "About FIDI", None, -1))
 
-from mplwidget import MplWidget
 import Images_rc
