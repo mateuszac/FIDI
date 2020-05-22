@@ -34,14 +34,11 @@ def create_element():
             return Shell(_data)
 
 
-def statical_quantities(width, height, density, element_type, supports):
+def statical_quantities(width, height, density):
     """Creating objects from statical quantities classes"""
     mesh = stat.Mesh(width, height, density)
-    displacements = stat.Displacements(mesh, element_type, supports)
-    rotations = stat.Rotations(mesh, element_type, supports)
-    membrane_forces = stat.MembraneForces(mesh)
-    membrane_moment = stat.MembraneMoment(mesh)
-    return [mesh, displacements, rotations, membrane_forces, membrane_moment]
+    displacements = stat.Displacements(mesh)
+    return [mesh, displacements]
 
 
 class Prism(object):
@@ -63,14 +60,10 @@ class Prism(object):
         self.computed = computed
 
         """setting initial statical quantities"""
-        statics = statical_quantities(self._geometry['width'], self._geometry['height'], self._density,
-                                      self._object_type, self._supports)
+        statics = statical_quantities(self._geometry['width'], self._geometry['height'], self._density)
         self.results = None
         self._nodes = statics[0].nodes
         self._displacements = statics[1].data
-        self._rotations = statics[2].data
-        self._membrane_forces = statics[3].data
-        self._membrane_moment = statics[4].data
 
     @property
     def geometry(self):
@@ -103,18 +96,6 @@ class Prism(object):
     @property
     def displacements(self):
         return self._displacements
-
-    @property
-    def rotations(self):
-        return self._rotations
-
-    @property
-    def membrane_forces(self):
-        return self._membrane_forces
-
-    @property
-    def membrane_moment(self):
-        return self._membrane_moment
 
 
 class Shield(Prism):

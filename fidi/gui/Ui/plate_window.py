@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'plate_window.ui',
 # licensing of 'plate_window.ui' applies.
 #
-# Created: Tue May 19 23:57:34 2020
+# Created: Wed May 20 00:30:38 2020
 #      by: pyside2-uic  running on PySide2 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainPlateWindow(object):
     def setupUi(self, MainPlateWindow):
         MainPlateWindow.setObjectName("MainPlateWindow")
-        MainPlateWindow.resize(690, 483)
+        MainPlateWindow.resize(690, 484)
         self.PlateWindow = QtWidgets.QWidget(MainPlateWindow)
         self.PlateWindow.setObjectName("PlateWindow")
         self.gridLayout = QtWidgets.QGridLayout(self.PlateWindow)
@@ -477,7 +477,7 @@ class Ui_MainPlateWindow(object):
         self.menubar.addAction(self.menuLoads.menuAction())
 
         self.retranslateUi(MainPlateWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainPlateWindow.close)
         QtCore.QObject.connect(self.actionLoad, QtCore.SIGNAL("triggered()"), self.LoadButton.click)
         QtCore.QMetaObject.connectSlotsByName(MainPlateWindow)
@@ -524,7 +524,7 @@ class Ui_MainPlateWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">The author is not responsible for the data, information and results of calculations obtained from this software. Use at your own risk. Data and calculation results should be checked each time.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">For verification if chosen density of mesh is enough, you may use the tool attached below. Pick one point of structure and check value in that point from this mesh and twice less dense mesh, then hit CHECK MESH button. If mesh is proper, sufficient mesh density box will be checked.</span></p></body></html>", None, -1))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">For verification if chosen density of mesh is enough, you may use the tool attached below. Pick one point of structure and check value in that point from this mesh and twice less dense mesh, then hit CHECK MESH button. If mesh is proper - relative error is less than 0.05 - sufficient mesh density box will be checked.</span></p></body></html>", None, -1))
         self.label_17.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Value from first mesh", None, -1))
         self.label_18.setText(QtWidgets.QApplication.translate("MainPlateWindow", "Value from denser mesh", None, -1))
         self.CheckMeshButton.setText(QtWidgets.QApplication.translate("MainPlateWindow", "CHECK MESH", None, -1))
